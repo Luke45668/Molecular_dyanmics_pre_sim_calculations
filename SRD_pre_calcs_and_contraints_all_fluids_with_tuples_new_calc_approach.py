@@ -39,9 +39,9 @@ from petersen_plotting import *
 equilibration_timesteps= 1000 # number of steps to do equilibration with 
 VP_ave_freq =1000
 chunk = 20
-swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
+#swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
 #alternate set of swap rates we can only run 9 as we have a limit of 9 sims per node
-#swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
+swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
