@@ -313,16 +313,33 @@ for z in range(0,index_of_tuples_passed.size):
 # need to create an array for each solution hat stores the data for multiple lnegth scales
 # then concantenates that to another tuple
 
-#for z in range(0,index_of_tuples_passed.size):
+solution_data_tuple=()
+for z in range(0,index_of_tuples_passed.size):
+    solution_data_tuple=solution_data_tuple+(np.zeros((num_passed_solutions_in_each_tuple[z],2)),)
+    for n in range(0,num_passed_solutions_in_each_tuple[z]):
+        solution_row=locations_of_non_nan_neg[index_of_tuples_passed[z][0]][n][0]
+        solution_col=locations_of_non_nan_neg[index_of_tuples_passed[z][0]][n][1]
+        # MFP data col 0
+        #solution_data_tuple[z][n,0]=mean_free_path_pf_SRD_particles_cp_mthd_1_neg[index_of_tuples_passed[z][0]][solution_row,solution_col]
+        # SRD MD ratio data col 1
+        solution_data_tuple[z][n,0]=Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[index_of_tuples_passed[z][0]][solution_row,solution_col]
+        # number data col 2
+        solution_data_tuple[z][n,1]=number_SRD_particles_wrt_pf_cp_mthd_1_neg[index_of_tuples_passed[z][0]][solution_row,solution_col]
+        
 
-          
+# now do plot of all solution points for each lengthscale, this allows us to tell which one has the least
+# particles and the highest value of SRD/MD ratio
+import sigfig
+fontsize=12
 
-
-
-
-
-
-
+for z in range(0,index_of_tuples_passed.size):
+   # for n in range(0,num_passed_solutions_in_each_tuple[z]):
+        
+        plt.scatter( solution_data_tuple[z][:,1],solution_data_tuple[z][:,0], marker='x',label='$\ell$={}'.format(sigfig.round(lengthscale_parameter[index_of_tuples_passed[z][0],0],sigfigs=3))) 
+        plt.xlabel('Number of Particles $[-]$', fontsize=fontsize)
+        plt.ylabel('$\\frac{\Delta t}{\Delta t_{MD}}\ [-]$', rotation='horizontal',labelpad=24, fontsize=fontsize)
+        plt.legend(loc='best', fontsize=fontsize)
+        
 
 #%% Selecting the solutions 
 solution_choice_tuple=2
