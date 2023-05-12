@@ -37,9 +37,9 @@ VP_ave_freq =1000
 chunk = 20
 atol=0.01
 rtol=0.00001
-swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
+#swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
 #alternate set of swap rates we can only run 9 as we have a limit of 9 sims per node
-#swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
+swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
@@ -345,7 +345,11 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
+<<<<<<< HEAD
 solution_choice_tuple=0
+=======
+solution_choice_tuple=2
+>>>>>>> parent of 801a967 (This actually is the final version)
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -374,7 +378,6 @@ np_req=str(total_no_realisations_per_solution*num_proc)
 wd_path='/home/ucahlrl/Scratch/output/'
 extra_code='module load mpi/intel/2018/update3/intel\n'
 data_transfer_instructions=''
-num_task_req=''
 i_=0
 j_=3
 #laptop path 
@@ -388,6 +391,4 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_s
 #imac path 
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 
-sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
-
-# %%
+sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
