@@ -53,7 +53,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =50e-6
-i=0 # this index sets the domain size 
+i=2 # this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 N=2
 Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
@@ -116,6 +116,7 @@ srd_ratio_tolerance=150
 #Physical data 
 fluid_name='Ar'
 scaled_timestep=0.1
+number_of_lengthscales=200
 rho_s = 1426.9#621 #kg/m^3
 Temp_visc_multiplier=0.000099
 T_K=86.5 * Temp_visc_multiplier#+273.15 #Kelvin
@@ -135,6 +136,7 @@ srd_ratio_tolerance=150
 
 #%% H20 Calculations #####
 #Physical data 
+tolerance=0.01
 fluid_name='H20'
 scaled_timestep=0.01
 rho_s = 1005##kg/m^3
@@ -152,11 +154,12 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=9
+srd_ratio_tolerance=8
 #%% Hexane Calculations #####
 #Physical data 
+tolerance=0.01
 fluid_name='C6H14'
-scaled_timestep=0.1
+scaled_timestep=0.01
 rho_s = 700  #kg/m^3
 Temp_visc_multiplier=0.00003
 T_K=311* Temp_visc_multiplier
@@ -172,7 +175,7 @@ length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=200
+srd_ratio_tolerance=60
 #%% The stand alone SRD(-a) calculations 
 #produce tuples 
 sc_pos_soln=()
@@ -265,8 +268,8 @@ for z in range(0,number_of_lengthscales):
     SRD_timestep_cp_1_based_on_sphere_pf_pos_nd= SRD_timestep_cp_1_based_on_sphere_pf_pos_nd+(SRD_non_dimensional_master_data[9],)
     SRD_step_pos_nd=SRD_timestep_cp_1_based_on_sphere_pf_pos_nd
     SRD_MD_ratio_pos=SRD_MD_ratio_pos+ ((SRD_timestep_cp_1_based_on_sphere_pf_pos_nd[z]/scaled_timestep),)
-    
-#%% # now apply constraints
+
+# now apply constraints
 from MPCD_constraints_on_solutions import MPCD_constraints 
 
 count_passed_constraints_neg=[]
@@ -301,7 +304,7 @@ for z in range(0,number_of_lengthscales):
     ax1.plot(lengthscale_parameter[:,0],count_passed_constraints_neg[:])#, marker='o',s=5)
 plt.show()
 
-#%% Assessing the solutions 
+# Assessing the solutions 
 # if there is too much data in this section just 
 
 index_of_tuples_passed=np.argwhere(count_passed_constraints_neg)
@@ -342,7 +345,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-solution_choice_tuple=1
+solution_choice_tuple=0
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
