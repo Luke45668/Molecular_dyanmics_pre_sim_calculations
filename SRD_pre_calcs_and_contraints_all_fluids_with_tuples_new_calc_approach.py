@@ -9,9 +9,6 @@ This script will does all the pre calcs for the SRD fluid mappings and then prod
 @author: lukedebono
 """
 #%%
-#### SELF NOTE: Need to add upper bound to SRD/MD ratio i.e there should be a certain number of SRD steps per simulation 
-
-
 import os
 import numpy as np
 
@@ -47,47 +44,46 @@ dump_freq=1000 # if you change the timestep rememebr to chaneg this
 thermo_freq = 10000
 no_timesteps=500000 # might be worth lowering this in future 
 realisation_index_ =np.linspace(0, 10,11)
-fluid_name='Nitrogen'
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
-atol=0.01
-rtol=0.00001
 number_of_test_points =25
 Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,20,number_of_test_points))])
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
-scaled_timestep=0.01
-
+atol=0.01
+rtol=0.00001
 # determine side length of simulation box
 r_particle =50e-6
-phi=0.0005
+i=0
+phi=[0.005,0.0005,0.00005]
 N=2
-Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
 box_side_length=np.cbrt(Vol_box_at_specified_phi)
 
 # determine minimum number of collision cells based on total box size 
-number_boxes_var=100
-
+number_boxes_var=100 
 # for 0.0005 23 worked as min  
-min_number_boxes_for_particle_size=52 #112 was min for 0.00005,24 for 0.005,
-# this makes the boxes less than 0.25 r particle 
-number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+min_number_boxes_for_particle_size=[24,52,112] #0.005,0.0005,0.00005
 
-collision_cell_size=box_side_length/number_boxes_vec
-collision_cell_boolean= collision_cell_size > (r_particle/2)
-if np.any(collision_cell_boolean)==True:
-    print("not enough collision cells to resolve around the particle")
-else: 
-    print("Resolution achieved")
+# this makes the boxes less than 0.25 r particle 
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
+def collision_cell_bound_enforcer():
+    collision_cell_size=box_side_length/number_boxes_vec
+    collision_cell_boolean= collision_cell_size > (r_particle/2)
+    if np.any(collision_cell_boolean)==True:
+        print("not enough collision cells to resolve around the particle")
+    else: 
+        print("Resolution achieved")
 
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 # Start of N2 Calculations #####
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 #%%
 # fixed values for nitrogen 
+fluid_name='Nitrogen'
+scaled_timestep=0.01
 rho_s = 847 #kg/m^3
 Temp_visc_multiplier=0.0000046059
 T_K=72.2 *  Temp_visc_multiplier#+273.15 #Kelvin
 k_b= 1.380649e-23 #boltzmann in J K^-1
-
 # linear interpolation
 # to determine true visc from NIST data
 eta_s_1 = 0.00022081
@@ -97,30 +93,11 @@ rho_2 = 850.73
 delta_rho=rho_2-rho_1 
 delta_eta_s =eta_s_2 - eta_s_1 
 grad_eta_s_rho_s = delta_eta_s/delta_rho
-
 eta_s_NIST=0.00022081 + ((rho_s -rho_1)*grad_eta_s_rho_s) 
-eta_s_multiplier=1 
 eta_s=eta_s_NIST*Temp_visc_multiplier #*1000 to convert kg to g
-
 nu_s = (eta_s/rho_s) 
-
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
-
-
 box_size_vec = np.array([box_side_length/number_boxes_vec])
-#box_size_vec=np.array([0.5*r_particle,0.4*r_particle,0.3*r_particle])
-# for estimating minimum box size for particle resolution 
-
-# for z in range(0,number_boxes_var):
-    
-#      if box_size_vec[0,z] > 0.5*r_particle:
-     
-#         box_size_vec[0,z]='NAN'
-#      else:
-#         box_size_vec[0,z]=box_size_vec[0,z]
-    
-    
-
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
 #%%
 # the length multplier is the key var to chnage 
@@ -171,26 +148,15 @@ box_size_to_lengthscale=box_size_vec/lengthscale_parameter
 mass_multiplier=10000000
 SRD_mass_scale_parameter = mass_multiplier* rho_s * (lengthscale_parameter**3)
 r_particle_scaled = r_particle/lengthscale_parameter
-
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 box_size_vec_nd=box_side_length_scaled/number_boxes_vec
-#SRD_box_size_wrt_solid_beads=box_size_vec_nd
 SRD_box_size_wrt_solid_beads_check=box_size_vec
 
-#length_multiplier=np.repeat(np.array([np.linspace(0.00000000001,0.00001,number_of_lengthscales)]).T,number_boxes_var,axis=1)
-# good setting for the length multiplier above 
-
-#length_multiplier=np.repeat(np.array([np.linspace(0.000000000001,1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 
 
 for z in range(0,number_of_lengthscales):
-    #  = lengthscale_parameter[0,z]
-    # box_side_length_scaled=(box_side_length/lengthscale_parameter)
-    # box_size_to_lengthscale=box_size_vec/lengthscale_parameter
-    # mass_multiplier=10000000
-    # SRD_mass_scale_parameter = mass_multiplier* rho_s * (lengthscale_parameter**3)
-    # r_particle_scaled = r_particle/lengthscale_parameter
+   
 
     import units_lj_scalings
     scalings_calculation= units_lj_scalings.units_lj_scalings_(SRD_mass_scale_parameter[z,0],lengthscale_parameter[z,0],k_b,rho_s,eta_s,T_K)
@@ -208,22 +174,12 @@ for z in range(0,number_of_lengthscales):
     import numpy as np
     from SRD_master import *
 
-   #box_size_vec = np.array([box_side_length/number_boxes_vec])
-    #box_size_vec_nd=box_size_vec_nd+(np.array([box_side_length_scaled[z,0]/number_boxes_vec]),)
-    #number_of_boxes_in_each_dim=number_boxes_vec
     SRD_box_size_wrt_solid_beads= SRD_box_size_wrt_solid_beads+ (box_size_vec_nd[z,:],)
-    #SRD_box_size_wrt_solid_beads_check=SRD_box_size_wrt_solid_beads_check+(box_size_vec,)
-
-
-
-    SRD_non_dimensional_master_data=SRD_MASTER_calc_(mass_fluid_particle_wrt_pf_cp_mthd_1,box_side_length,number_boxes_vec,scaled_timestep,rtol,nu_s,Solvent_bead_SRD_box_density_cp_1, box_size_vec,box_size_vec_nd,SRD_box_size_wrt_solid_beads_check,box_side_length_scaled[z,0],T_K,SRD_mass_scale_parameter[z,0],lengthscale_parameter[z,0],k_b,rho_s,eta_s)
-                                    #SRD_MASTER_calc_(mass_fluid_particle_wrt_pf_cp_mthd_1,box_side_length,number_boxes_vec,scaled_timestep,rtol,nu_s,Solvent_bead_SRD_box_density_cp_1, box_size_vec,box_size_vec_nd,SRD_box_size_wrt_solid_beads_check,box_side_length_scaled,T_K,SRD_mass_scale_parameter,lengthscale_parameter,k_b,rho_s,eta_s):
-     
-  # box_side_length_scaled,T_K,SRD_mass_scale_parameter,lengthscale_parameter,k_b,rho_s,eta_s
+    SRD_non_dimensional_master_data=SRD_MASTER_calc_(mass_fluid_particle_wrt_pf_cp_mthd_1,box_side_length,number_boxes_vec,scaled_timestep,rtol,nu_s,Solvent_bead_SRD_box_density_cp_1, box_size_vec,box_size_vec_nd,SRD_box_size_wrt_solid_beads_check,box_side_length_scaled[z,0],T_K,SRD_mass_scale_parameter[z,0],lengthscale_parameter[z,0],k_b,rho_s,eta_s)                            
+    
     sc_pos_soln=sc_pos_soln+(SRD_non_dimensional_master_data[0],)
     sc_neg_soln=sc_neg_soln+(SRD_non_dimensional_master_data[1],)
     
-
     mean_free_path_pf_SRD_particles_cp_mthd_1_neg=  mean_free_path_pf_SRD_particles_cp_mthd_1_neg+(SRD_non_dimensional_master_data[2],)
     mean_free_path_to_box_ratio_neg=mean_free_path_to_box_ratio_neg+((mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z]/SRD_box_size_wrt_solid_beads[z]),)
     mean_free_path_pf_SRD_particles_cp_mthd_1_pos=mean_free_path_pf_SRD_particles_cp_mthd_1_pos+(SRD_non_dimensional_master_data[3],)
@@ -232,10 +188,6 @@ for z in range(0,number_of_lengthscales):
     Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg=Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg+(SRD_non_dimensional_master_data[4],)
     Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos=Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos+(SRD_non_dimensional_master_data[5],)
 
-    #number_SRD_particles_wrt_pf_cp_mthd_1_neg=number_SRD_particles_wrt_pf_cp_mthd_1_neg+(SRD_non_dimensional_master_data[6],)
-    #Number_of_SRD_boxes_in_sim_box_wrt_pf=number_SRD_particles_wrt_pf_cp_mthd_1_pos+(SRD_non_dimensional_master_data[7],)
-
-    #mass_fluid_particle_wrt_pf_cp_mthd_1[z]=SRD_non_dimensional_master_data[6]
     number_SRD_particles_wrt_pf_cp_mthd_1_pos = number_SRD_particles_wrt_pf_cp_mthd_1_pos+(((np.array([(box_side_length_scaled[z,:]**3)/(SRD_box_size_wrt_solid_beads[z]**3)]))*(Solvent_bead_SRD_box_density_cp_1.T)),)
     number_SRD_particles_wrt_pf_cp_mthd_1_neg=number_SRD_particles_wrt_pf_cp_mthd_1_pos 
 
@@ -303,14 +255,9 @@ locations_of_non_nan_pos=()
 for z in range(0,number_of_lengthscales):
     
     MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln[z],sc_pos_soln[z],srd_ratio_tolerance,max_particle_count,number_SRD_particles_wrt_pf_cp_mthd_1_pos[z],number_SRD_particles_wrt_pf_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z],Solvent_bead_SRD_box_density_cp_1,tolerance,SRD_box_size_wrt_solid_beads[z],comparison_pos[z],comparison_neg[z])
-    count_passed_constraints_neg.append(np.count_nonzero(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z])))
-    #print("count_passed_constraints_neg "+str(count_passed_constraints_neg))
-
-    # this counts the non-nan values of the array by inverting the true false routine of .isnan with a ~ so now false are 1s and trues are 0 
-    #count_passed_constraints_pos=np.zeros((SRD_mass_scale_parameter.size))
+    count_passed_constraints_neg.append(np.count_nonzero(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z]))) 
     count_passed_constraints_pos.append(np.count_nonzero(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z])) )
-    #print("count_passed_constraints_pos "+str(count_passed_constraints_pos))
-
+  
     locations_of_non_nan_neg= locations_of_non_nan_neg+(np.argwhere(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z])),)
     locations_of_non_nan_pos= locations_of_non_nan_pos+(np.argwhere(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z])),)
 
@@ -972,14 +919,6 @@ sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_trans
 # Start of hexane  Calculations #####
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 #%% 
-tolerance=0.01
-number_of_test_points =25
-Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,100,number_of_test_points))])
-number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
-number_boxes_var=500
-min_number_boxes_for_particle_size=23
-number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
-
 
 rho_s = 700#621 #kg/m^3
 r_particle =50e-6 #m 
