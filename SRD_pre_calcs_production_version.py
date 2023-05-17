@@ -43,7 +43,10 @@ swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
-no_timesteps=500000 # might be worth lowering this in future 
+#no_timesteps=300000 # Nitrogen 
+#no_timesteps=200000 # water
+no_timesteps=500000 # Ar
+#no_timesteps=1000000 # C6H14
 realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
 number_of_test_points =25
@@ -53,7 +56,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =50e-6
-i=2 # this index sets the domain size 
+i=0 # this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 N=2
 Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
@@ -79,8 +82,8 @@ max_particle_count =[150000,1500000,15000000]
 min_particle_count=500
 
 # computational settings for each domain size
-wall_time=['4:00:00','8:00:00','20:00:00']
-ram_requirement=['4G','8G','16G']
+wall_time=['4:00:00','20:00:00','48:00:00']
+ram_requirement=['4G','16G','20G']
 tempdir_req='50G'
 
 #%% N2 Calculations #####
@@ -115,7 +118,7 @@ srd_ratio_tolerance=150
 #%% Ar Calculations #####
 #Physical data 
 fluid_name='Ar'
-scaled_timestep=0.1
+scaled_timestep=0.2#0.1 run 1
 number_of_lengthscales=200
 rho_s = 1426.9#621 #kg/m^3
 Temp_visc_multiplier=0.000099
@@ -132,7 +135,7 @@ length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales
 mass_multiplier=1000000
 
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=150
+srd_ratio_tolerance=100
 
 #%% H20 Calculations #####
 #Physical data 
@@ -345,11 +348,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-<<<<<<< HEAD
-solution_choice_tuple=0
-=======
-solution_choice_tuple=2
->>>>>>> parent of 801a967 (This actually is the final version)
+solution_choice_tuple=3
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -378,6 +377,7 @@ np_req=str(total_no_realisations_per_solution*num_proc)
 wd_path='/home/ucahlrl/Scratch/output/'
 extra_code='module load mpi/intel/2018/update3/intel\n'
 data_transfer_instructions=''
+num_task_req=''
 i_=0
 j_=3
 #laptop path 
@@ -391,4 +391,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_s
 #imac path 
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 
-sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+
+
+# %%
