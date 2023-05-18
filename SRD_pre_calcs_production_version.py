@@ -31,7 +31,7 @@ from petersen_plotting import *
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 # Fixed Values for all simulations #####
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
-
+rho_solid=1200 #PMMA sphere in kg/m^3
 equilibration_timesteps= 1000 # number of steps to do equilibration with 
 VP_ave_freq =1000
 chunk = 20
@@ -43,9 +43,9 @@ swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
-#no_timesteps=300000 # Nitrogen 
+no_timesteps=300000 # Nitrogen 
 #no_timesteps=200000 # water
-no_timesteps=500000 # Ar
+#no_timesteps=500000 # Ar
 #no_timesteps=1000000 # C6H14
 realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
@@ -61,6 +61,15 @@ phi=[0.005,0.0005,0.00005]
 N=2
 Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
 box_side_length=np.cbrt(Vol_box_at_specified_phi)
+Vol_box_minus_particle_vol= Vol_box_at_specified_phi -  (N* (4/3)*np.pi*r_particle**3 )
+# for solid inc runs 
+particle_x_upper=0.5*box_side_length
+particle_y_upper=0.5*box_side_length
+particle_z_upper=0.75* box_side_length
+particle_x_lower=0.5*box_side_length
+particle_y_lower=0.5*box_side_length
+particle_z_lower=0.25* box_side_length
+mass_solid= (4/3)*np.pi*r_particle**3 * rho_solid
 
 # determine minimum number of collision cells based on total box size 
 number_boxes_var=100 
@@ -82,7 +91,8 @@ max_particle_count =[150000,1500000,15000000]
 min_particle_count=500
 
 # computational settings for each domain size
-wall_time=['4:00:00','20:00:00','48:00:00']
+wall_time=['4:00:00','16:00:00','24:00:00']
+
 ram_requirement=['4G','16G','20G']
 tempdir_req='50G'
 
@@ -107,7 +117,11 @@ eta_s=eta_s_NIST*Temp_visc_multiplier #*1000 to convert kg to g
 nu_s = (eta_s/rho_s) 
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
+#pure fluid 
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
+# with solid particles 
+mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
+
 
 #Multipliers for scalings 
 length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -128,7 +142,11 @@ eta_s=eta_s_NIST* Temp_visc_multiplier#*1000 #*1000 to convert kg to g
 nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
+# pure fluid 
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
+# with solid particles 
+#mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
+
 
 #Multipliers for scalings 
 length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -150,7 +168,12 @@ eta_s=eta_s_NIST * Temp_visc_multiplier
 nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
+# pure fluid 
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
+# with solid particles 
+#mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
+
+
 
 #Multipliers for scalings 
 length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -171,7 +194,12 @@ eta_s=eta_s_NIST * Temp_visc_multiplier
 nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
+# pure fluid 
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
+# with solid particles 
+#mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
+
+
 
 #Multipliers for scalings 
 length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -225,6 +253,7 @@ r_particle_scaled = r_particle/lengthscale_parameter
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 box_size_vec_nd=box_side_length_scaled/number_boxes_vec
 SRD_box_size_wrt_solid_beads_check=box_size_vec
+
 
 for z in range(0,number_of_lengthscales):
    
@@ -348,7 +377,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-solution_choice_tuple=3
+solution_choice_tuple=2
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -359,6 +388,15 @@ number_SRD_particles_wrt_pf_cp_mthd_1_neg_in=number_SRD_particles_wrt_pf_cp_mthd
 SRD_box_size_wrt_solid_beads_in=SRD_box_size_wrt_solid_beads[solution_choice_tuple ][solution_column]
 mass_fluid_particle_wrt_pf_cp_mthd_1_in=(mass_fluid_particle_wrt_pf_cp_mthd_1[solution_row,solution_column])/(SRD_mass_scale_parameter[solution_choice_tuple ,0])
 lengthscale_parameter_in=lengthscale_parameter[solution_choice_tuple ][0]
+r_particle_scaled_in=str(r_particle_scaled[solution_choice_tuple ,0])
+# for solid inc
+particle_x_upper_nd=str(particle_x_upper/lengthscale_parameter_in)
+particle_y_upper_nd=str(particle_y_upper/lengthscale_parameter_in)
+particle_z_upper_nd=str(particle_z_upper/lengthscale_parameter_in)
+particle_x_lower_nd=str(particle_x_lower/lengthscale_parameter_in)
+particle_y_lower_nd=str(particle_y_lower/lengthscale_parameter_in)
+particle_z_lower_nd=str(particle_z_lower/lengthscale_parameter_in)
+mass_solid_in=str(mass_solid/SRD_mass_scale_parameter[solution_choice_tuple ,0])
 
 print("Mean free Path: ",mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in)
 print("SRD MD ratio : ",Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in)
@@ -369,7 +407,7 @@ print("Simulation domain size:",box_side_length_scaled[solution_choice_tuple,0])
 print("Check M>=10",( number_SRD_particles_wrt_pf_cp_mthd_1_neg_in/((box_side_length_scaled[solution_choice_tuple,0])**3/(SRD_box_size_wrt_solid_beads_in**3))))
 
 #%% Produce run files 
-from sim_file_producer_SRD import sim_file_prod_neg_soln
+from sim_file_producer_SRD import *
 prod_run_file_name=fluid_name+'_prod_run_1_box_'+str(box_side_length_scaled) 
 num_proc=4
 total_no_realisations_per_solution=9 
@@ -390,8 +428,12 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_s
 #Path_2_generic='/Users/lukedebono/documents/LAMMPS_projects_mac_book/OneDrive_1_24-02-2023/Shell_scripts_for_MYRIAD'
 #imac path 
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
+#%%pure fluid 
 
 sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 
-
+#%% solid included 
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+sim_file_prod_neg_soln_solid_inc(mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
+    
 # %%
