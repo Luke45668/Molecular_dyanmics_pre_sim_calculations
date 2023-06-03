@@ -15,10 +15,10 @@ from datetime import datetime
 #%% Read in the generic script 
 
 #Path_2_shell=input('Please insert  absolute path to generic launch script')
-def py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions):
+def py2bash_launch_overwriter(hypthread,Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions):
     #Path_2_generic='/Volumes/Backup Plus/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD/' 
     os.chdir(Path_2_generic)
-    filename_generic_launcher = 'generic_myriad_launch.sh'
+    filename_generic_launcher = 'generic_kathleen_launch.sh'
     
     
     with open(filename_generic_launcher,'r+') as f:
@@ -67,10 +67,9 @@ def py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_
     specific_myriad_launch_string = re.sub(ram_requirement_regex,ram_requirement,specific_myriad_launch_string) 
     
     
-    #tempdir space requested
-    #tempdir_req='1G'
-#     tempdir_req_regex = re.compile(r'TMPMEM')
-#     specific_myriad_launch_string= re.sub(tempdir_req_regex, tempdir_req, specific_myriad_launch_string)
+    # requesting hyper threading
+    hypthread_regex = re.compile(r'THREADS')
+    specific_myriad_launch_string= re.sub( hypthread_regex, hypthread, specific_myriad_launch_string)
     
     #number of tasks 
     #num_task_req=''
