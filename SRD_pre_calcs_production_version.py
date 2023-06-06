@@ -43,7 +43,7 @@ swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from origin
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
-no_timesteps=2000000 # Nitrogen 
+ # Nitrogen 
 
 realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
@@ -54,8 +54,10 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =50e-6
-i=0 # this index sets the domain size 
+i=2 # this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
+no_timesteps_=[1000000,2000000,3000000]
+no_timesteps=no_timesteps_[i]
 N=2
 Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
 box_side_length=np.cbrt(Vol_box_at_specified_phi)
@@ -114,7 +116,7 @@ box_size_vec = np.array([box_side_length/number_boxes_vec])
 #pure fluid 
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
 # with solid particles 
-mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
+#mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
 
 
 #Multipliers for scalings 
@@ -371,7 +373,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-solution_choice_tuple=1
+solution_choice_tuple=2
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -404,9 +406,9 @@ print("Check M>=10",( number_SRD_particles_wrt_pf_cp_mthd_1_neg_in/((box_side_le
 from sim_file_producer_SRD import *
 
 max_cores= 36   # for myriad 
-no_timesteps=4000000
+#no_timesteps=4000000
 prod_run_file_name=fluid_name+'_prod_run_1_box_'+str(box_side_length_scaled) 
-num_proc=4
+#num_proc=4
 
 wd_path='/home/ucahlrl/Scratch/output/'
 extra_code='module load mpi/intel/2018/update3/intel\n'
@@ -414,8 +416,8 @@ data_transfer_instructions=''
 num_task_req=''
 i_=0
 j_=3
-wall_time=['24:00:00','16:00:00','24:00:00']
-ram_requirement=['16G','16G','20G']
+wall_time=['12:00:00','24:00:00','36:00:00']
+ram_requirement=['8G','16G','20G']
 tempdir_req='20G'
 #%% MYRIAD paths 
 #laptop path 
@@ -440,13 +442,30 @@ if (int(np_req)) > max_cores:
       breakpoint()
 else:
       print("Core request satisfactory, producing simulation submission script ")
-      sim_file_prod_neg_soln(solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
-
+      sim_file_prod_neg_soln(phi,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+#%% pure fluid individual files 
+swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
+max_cores=8
+num_proc=8
+np_req=str(num_proc)
+phi_ = str(phi[i])
+if (int(np_req)) > max_cores:
+      print("Too many cores requested")
+      breakpoint()
+else:
+      print("Core request satisfactory, producing simulation submission script ")
+sim_file_prod_neg_soln_individual(phi_,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+    
+    
+    
+    
+    
+    
 #%% solid included 
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
-swap_rate=np.array([3,7,10,15])
-
+swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
+wall_time=['24:00:00','36:00:00','48:00:00']
 np_req=str(swap_rate.size*num_proc)
 
 if (int(np_req)) > max_cores:
@@ -454,8 +473,30 @@ if (int(np_req)) > max_cores:
       breakpoint()
 else:
       print("Core request satisfactory, producing simulation submission script ")
-      sim_file_prod_neg_soln_solid_inc(mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
+      sim_file_prod_neg_soln_solid_inc(phi,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
     
+#%% solid inc individual 
+num_proc=8
+max_cores=8
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+#no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
+swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
+wall_time=['24:00:00','36:00:00','48:00:00']
+np_req=str(num_proc)
+phi_ = str(phi[i])
+if (int(np_req)) > max_cores:
+      print("Too many cores requested")
+      breakpoint()
+else:
+      print("Core request satisfactory, producing simulation submission script ")
+      sim_file_prod_neg_soln_solid_inc_individual(phi_,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
+                                                
+
+
+
+
+
+
 #%% KATHLEEN paths 
 ##################
 #laptop path 
@@ -469,7 +510,8 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_s
 #imac path 
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_KATHLEEN'
 hypthread='2'
-num_proc=8
+
+max_cores= 80 
 
 #%% pure fluid 
 # change the swap rate vector to chnage the number of simulations run in parallel by one scub script
@@ -478,28 +520,31 @@ swap_rate = np.array([3,7,15,30,150,60,300,600,900,1200])
 ram_requirement='2G'
 wall_time=['24:00:00','48:00:00','48:00:00']
 np_req=str(swap_rate.size*num_proc)
-
-max_cores= 80  # for one KATHLEEN node 
+phi_ = str(phi[i])
+ # for one KATHLEEN node 
 if (int(np_req)) > max_cores:
       print("Too many cores requested")
       breakpoint()
 else:
       print("Core request satisfactory, producing simulation submission script ")
-      sim_file_prod_neg_soln_kathleen(hypthread,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+      sim_file_prod_neg_soln_kathleen(phi_,hypthread,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 
 #%% solid included 
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
+num_proc=16
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-am_requirement='2G'
+ram_requirement='2G'
 # max wall time on KAthleen is 48hrs for 41-240 nodes 
-wall_time=['24:00:00','48:00:00','48:00:00']
+wall_time=['24:00:00','36:00:00','48:00:00']
 np_req=str(swap_rate.size*num_proc)
-
+phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
       print("Too many cores requested")
       breakpoint()
 else:
       print("Core request satisfactory, producing simulation submission script ")      
-      sim_file_prod_neg_soln_solid_inc_kathleen(hypthread,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
+      sim_file_prod_neg_soln_solid_inc_kathleen(phi_,hypthread,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
     
+
+# %%

@@ -50,7 +50,8 @@ def py2bash_launch_overwriter(hypthread,Path_2_generic,simulation_batch_folder,s
     specific_myriad_launch_string = re.sub(email_regex,specific_email,specific_myriad_launch_string) 
     
     #priority phrase
-    priority='#$ -P Gold \n#$ -A hpc.13'
+    #priority='#$ -P Gold \n#$ -A hpc.13'
+    priority=''
     priority_regex= re.compile(r'PRIORITY')
     specific_myriad_launch_string = re.sub(priority_regex,priority,specific_myriad_launch_string) 
     
