@@ -69,8 +69,8 @@ def py2bash_launch_overwriter(hypthread,Path_2_generic,simulation_batch_folder,s
     
     
     # requesting hyper threading
-    hypthread_regex = re.compile(r'THREADS')
-    specific_myriad_launch_string= re.sub( hypthread_regex, hypthread, specific_myriad_launch_string)
+    #hypthread_regex = re.compile(r'THREADS')
+    #specific_myriad_launch_string= re.sub( hypthread_regex, hypthread, specific_myriad_launch_string)
     
     #number of tasks 
     #num_task_req=''

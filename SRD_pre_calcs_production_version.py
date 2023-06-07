@@ -54,7 +54,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =50e-6
-i=2 # this index sets the domain size 
+i=0 # this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 no_timesteps_=[1000000,2000000,3000000]
 no_timesteps=no_timesteps_[i]
@@ -120,7 +120,10 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 
 #Multipliers for scalings 
-length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+#length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+# for solids maybe liquid aswell ?? 
+length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+
 mass_multiplier=10000000
 # Tolerance for SRD MD ratio 
 srd_ratio_tolerance=150
@@ -145,9 +148,10 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 
 #Multipliers for scalings 
+# for solids maybe liquid aswell ?? 
 length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 mass_multiplier=1000000
-
+#length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # Tolerance for SRD MD ratio 
 srd_ratio_tolerance=100
 
@@ -172,7 +176,11 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 
 #Multipliers for scalings 
-length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+# for solids maybe liquid aswell ?? 
+#length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+# for solids maybe liquid aswell ?? 
+#length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
@@ -198,7 +206,11 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 
 #Multipliers for scalings 
-length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+
+#length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+# for solids maybe liquid aswell ?? 
+length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
@@ -373,7 +385,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-solution_choice_tuple=2
+solution_choice_tuple=0
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -398,6 +410,7 @@ print("Mean free Path: ",mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in)
 print("SRD MD ratio : ",Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in)
 print("SRD particle count:", number_SRD_particles_wrt_pf_cp_mthd_1_neg_in)
 print("Collision cell size:",SRD_box_size_wrt_solid_beads_in)
+print("Particle size",r_particle_scaled_in)
 print("Mass fluid particle:", mass_fluid_particle_wrt_pf_cp_mthd_1_in)
 print("Simulation domain size:",box_side_length_scaled[solution_choice_tuple,0])
 print("Check M>=10",( number_SRD_particles_wrt_pf_cp_mthd_1_neg_in/((box_side_length_scaled[solution_choice_tuple,0])**3/(SRD_box_size_wrt_solid_beads_in**3))))
@@ -547,4 +560,22 @@ else:
       sim_file_prod_neg_soln_solid_inc_kathleen(phi_,hypthread,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
     
 
+# %%
+#%% solid included individual 
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+#no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
+num_proc=80
+swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
+ram_requirement='2.4G'
+# max wall time on KAthleen is 48hrs for 41-240 nodes 
+wall_time=['24:00:00','24:00:00','36:00:00']
+np_req=str(num_proc)
+phi_ = str(phi[i])
+if (int(np_req)) > max_cores:
+      print("Too many cores requested")
+      breakpoint()
+else:
+      print("Core request satisfactory, producing simulation submission script ")      
+      sim_file_prod_neg_soln_solid_inc_individual_kathleen(phi_,hypthread,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
+                                                         
 # %%
