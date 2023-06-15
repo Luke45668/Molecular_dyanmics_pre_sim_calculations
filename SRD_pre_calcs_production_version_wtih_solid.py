@@ -54,7 +54,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =10e-6
-i=0# this index sets the domain size 
+i=2# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 
 no_timesteps_=[1000000,2000000,4000000]
@@ -117,10 +117,10 @@ min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 min_number_boxes_for_particle_size=[12,25,56] 
 # for r=10e-6
-srd_ratio_tolerance=[3000,0,0]
-min_particle_count=[7000,20000,100000]
+srd_ratio_tolerance=[3000,5000,6000]
+min_particle_count=[7000,40000,100000]
 max_particle_count =[10000,1500000,2000000]
-min_number_boxes_for_particle_size=[6,25,56] 
+min_number_boxes_for_particle_size=[6,15,30] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 
@@ -160,14 +160,14 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[0,0,0]
-min_particle_count=[2400,20000,100000]
+srd_ratio_tolerance=[6500,5000,6500]
+min_particle_count=[2400,2000,10000]
 max_particle_count =[3000,1500000,2000000]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
 #for 10e-6 
-min_number_boxes_for_particle_size=[5,25,56] 
+min_number_boxes_for_particle_size=[5,12,23] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 
@@ -200,14 +200,14 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[220,0,0]
+srd_ratio_tolerance=[220,330,330]
 min_particle_count=[7000,20000,100000]
 max_particle_count =[30000,1500000,2000000]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
 #for 10e-6 
-min_number_boxes_for_particle_size=[8,25,56] 
+min_number_boxes_for_particle_size=[8,14,30] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
@@ -242,14 +242,14 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[5000,0,0]
-min_particle_count=[1200,20000,100000]
+srd_ratio_tolerance=[5000,4000,5800]
+min_particle_count=[1200,13000,100000]
 max_particle_count =[3000000,1500000,2000000]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
 #for 10e-6 
-min_number_boxes_for_particle_size=[4,25,56] 
+min_number_boxes_for_particle_size=[4,10,18] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
@@ -362,7 +362,7 @@ for z in range(0,number_of_lengthscales):
     SRD_step_pos_nd=SRD_timestep_cp_1_based_on_sphere_pf_pos_nd
     SRD_MD_ratio_pos=SRD_MD_ratio_pos+ ((SRD_timestep_cp_1_based_on_sphere_pf_pos_nd[z]/scaled_timestep),)
 
-#%%
+
 # now apply constraints
 from MPCD_constraints_on_solutions import MPCD_constraints 
 
@@ -441,7 +441,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0
-solution_choice=2
+solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -519,7 +519,7 @@ max_cores=8
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-wall_time=['24:00:00','36:00:00','48:00:00']
+wall_time=['24:00:00','24:00:00','36:00:00']
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
