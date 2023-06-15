@@ -59,7 +59,7 @@ def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd
             
             #negative solution   
                         
-            if (mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z,i]/SRD_box_size_wrt_solid_beads[i])< 0.07:
+            if (mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z,i]/SRD_box_size_wrt_solid_beads[i])< 0.1:
                 Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z,i] =Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z,i] 
             else:
                      #mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z,i]= float("NAN")
@@ -74,7 +74,7 @@ def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd
             #print(number_SRD_particles_wrt_pf_cp_mthd_1_neg[z,i])             
             #positive solution 
             
-            if (mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z,i]/SRD_box_size_wrt_solid_beads[i])< 0.07:
+            if (mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z,i]/SRD_box_size_wrt_solid_beads[i])< 0.1:
                      #print("Knudsen number in the continuum regime")
                 Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z,i]=Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z,i]
             else:

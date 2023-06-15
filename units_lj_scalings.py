@@ -17,5 +17,5 @@ def units_lj_scalings_(SRD_mass_scale_parameter,lengthscale_parameter,k_b,rho_s,
     temperature_parameter =energy_parameter/k_b
     scaled_rho_s = rho_s*(lengthscale_parameter**3)/SRD_mass_scale_parameter
     scaled_dynamic_viscosity = eta_s * (lengthscale_parameter**(3))/ (energy_parameter* timescale_parameter)
-    scaled_nu_s = np.float128( (eta_s/rho_s)*(SRD_mass_scale_parameter/(energy_parameter*timescale_parameter)  ) )#scaled_dynamic_viscosity/scaled_rho_s
+    scaled_nu_s = ( (eta_s/rho_s)*(SRD_mass_scale_parameter/(energy_parameter*timescale_parameter)  ) )#scaled_dynamic_viscosity/scaled_rho_s
     return energy_parameter,timescale_parameter,temperature_parameter,scaled_dynamic_viscosity,scaled_nu_s,scaled_rho_s
