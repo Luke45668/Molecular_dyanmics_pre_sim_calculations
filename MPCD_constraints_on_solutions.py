@@ -21,7 +21,7 @@ def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd
         
             
             #### Need to add SRD/MD ratio constraint 
-            #positive 
+            # #positive 
             if Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z,i]/no_timesteps > 0.1:
                
                 Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z,i] =float("NAN") 

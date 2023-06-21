@@ -54,7 +54,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =10e-6
-i=0# this index sets the domain size 
+i=2# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 #phi=[0.005,0.0005,0.00005]
 no_timesteps_=[1000000,2000000,4000000]
@@ -110,8 +110,11 @@ length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscal
 # nlength_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=10000000
-
-srd_ratio_tolerance=150
+# for the 0.00005 simulations 
+min_particle_count=400000
+srd_ratio_tolerance=6500
+no_timesteps_=[1000000,2000000,4000000]
+no_timesteps=no_timesteps_[i]
 
 
 #%% Ar Calculations #####
@@ -137,6 +140,8 @@ mass_multiplier=1000000
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # Tolerance for SRD MD ratio 
 srd_ratio_tolerance=100
+min_particle_count=200000
+srd_ratio_tolerance=6500
 
 #%% H20 Calculations #####
 #Physical data 
@@ -157,14 +162,21 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 #Multipliers for scalings 
 # for solids maybe liquid aswell ?? 
-#length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # for solids maybe liquid aswell ?? 
-length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+#length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=100
+min_particle_count=3850 # for phi=0.005
+min_particle_count=39200 # for phi=0.0005
+min_particle_count=250000# phi=0.00005
 
+srd_ratio_tolerance=535
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=8
+no_timesteps_=[8000000,8000000,8000000]
+no_timesteps=no_timesteps_[i]
+
+
 #%% Hexane Calculations #####
 #Physical data 
 tolerance=0.01
@@ -185,14 +197,15 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 
 #Multipliers for scalings 
 
-#length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # for solids maybe liquid aswell ?? 
-length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+#length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=60
+min_particle_count=100000
+srd_ratio_tolerance=5900
 #%% The stand alone SRD(-a) calculations 
 #produce tuples 
 sc_pos_soln=()
@@ -363,7 +376,7 @@ for z in range(0,index_of_tuples_passed.size):
         
 
 #%% Selecting the solutions 
-solution_choice_tuple=1
+solution_choice_tuple=0
 solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
@@ -396,7 +409,7 @@ data_transfer_instructions=''
 num_task_req=''
 i_=0
 j_=3
-wall_time=['12:00:00','24:00:00','48:00:00']
+wall_time=['12:00:00','24:00:00','36:00:00']
 
 ram_requirement=['16G','16G','20G']
 tempdir_req='20G'

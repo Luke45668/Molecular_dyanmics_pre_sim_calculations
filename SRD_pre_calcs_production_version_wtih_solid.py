@@ -43,8 +43,6 @@ swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from origin
 swap_number = np.array([1,10,100,1000])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
- # Nitrogen 
-
 realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
 number_of_test_points =25
@@ -54,10 +52,12 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =10e-6
-i=2# this index sets the domain size 
+i=2 # this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 
 no_timesteps_=[1000000,2000000,4000000]
+# for particle equilibration runs
+no_timesteps_=[10000000,12000000,14000000]
 no_timesteps=no_timesteps_[i]
 N=2
 Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi[i]
@@ -121,6 +121,8 @@ srd_ratio_tolerance=[3000,5000,6000]
 min_particle_count=[7000,40000,100000]
 max_particle_count =[10000,1500000,2000000]
 min_number_boxes_for_particle_size=[6,15,30] 
+no_timesteps_=[8000000,8000000,12000000]
+no_timesteps=no_timesteps_[i]
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 
@@ -162,7 +164,11 @@ max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
 srd_ratio_tolerance=[6500,5000,6500]
 min_particle_count=[2400,2000,10000]
-max_particle_count =[3000,1500000,2000000]
+max_particle_count =[300000,1500000,2000000]
+no_timesteps_=[10000000,10000000,1500000]
+no_timesteps=no_timesteps_[i]
+Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,35,number_of_test_points))])
+number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
@@ -203,6 +209,8 @@ max_particle_count =[1500000,1500000,2000000]
 srd_ratio_tolerance=[220,330,330]
 min_particle_count=[7000,20000,100000]
 max_particle_count =[30000,1500000,2000000]
+no_timesteps_=[8000000,8000000,16000000]
+no_timesteps=no_timesteps_[i]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
@@ -245,6 +253,8 @@ max_particle_count =[1500000,1500000,2000000]
 srd_ratio_tolerance=[5000,4000,5800]
 min_particle_count=[1200,13000,100000]
 max_particle_count =[3000000,1500000,2000000]
+no_timesteps_=[10000000,10000000,1500000]
+no_timesteps=no_timesteps_[i]
 
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
@@ -364,6 +374,7 @@ for z in range(0,number_of_lengthscales):
 
 
 # now apply constraints
+
 from MPCD_constraints_on_solutions import MPCD_constraints 
 
 count_passed_constraints_neg=[]
@@ -436,7 +447,7 @@ for z in range(0,index_of_tuples_passed.size):
         plt.scatter( solution_data_tuple[z][:,1],solution_data_tuple[z][:,0], marker='x',label='$\ell$={}'.format(sigfig.round(lengthscale_parameter[index_of_tuples_passed[z][0],0],sigfigs=3))) 
         plt.xlabel('Number of Particles $[-]$', fontsize=fontsize)
         plt.ylabel('$\\frac{\Delta t}{\Delta t_{MD}}\ [-]$', rotation='horizontal',labelpad=24, fontsize=fontsize)
-        plt.legend(loc='right', fontsize=fontsize)
+        #plt.legend(loc='right', fontsize=fontsize)
         
 
 #%% Selecting the solutions 
@@ -484,6 +495,8 @@ num_task_req=''
 i_=0
 j_=3
 wall_time=['12:00:00','24:00:00','48:00:00']
+# for long runs 
+wall_time=['48:00:00','48:00:00','48:00:00']
 
 ram_requirement=['16G','16G','20G']
 tempdir_req='20G'
@@ -519,7 +532,9 @@ max_cores=8
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-wall_time=['24:00:00','24:00:00','36:00:00']
+wall_time=['12:00:00','24:00:00','36:00:00']
+# for long runs 
+#wall_time=['48:00:00','48:00:00','48:00:00']
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
