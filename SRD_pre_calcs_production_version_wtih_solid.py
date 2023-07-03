@@ -32,6 +32,8 @@ from petersen_plotting import *
 # Fixed Values for all simulations #####
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 rho_solid=1200 #PMMA sphere in kg/m^3
+rho_solid=2400 #PMMA sphere in kg/m^3
+#rho_solid=4800 #PMMA sphere in kg/m^3
 equilibration_timesteps= 1000 # number of steps to do equilibration with 
 VP_ave_freq =1000
 chunk = 20
@@ -41,18 +43,19 @@ swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from origin
 #alternate set of swap rates we can only run 9 as we have a limit of 9 sims per node
 #swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
 swap_number = np.array([1,10,100,1000])
-dump_freq=1000 # if you change the timestep rememebr to chaneg this 
+dump_freq=10000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
 realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
 number_of_test_points =25
-Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,20,number_of_test_points))])
+Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,30,number_of_test_points))])
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 r_particle =10e-6
-i=2 # this index sets the domain size 
+r_particle =25e-6
+i=1# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 
 no_timesteps_=[1000000,2000000,4000000]
@@ -118,10 +121,10 @@ max_particle_count =[1500000,1500000,2000000]
 min_number_boxes_for_particle_size=[12,25,56] 
 # for r=10e-6
 srd_ratio_tolerance=[3000,5000,6000]
-min_particle_count=[7000,40000,100000]
+min_particle_count=[8000,40000,100000]
 max_particle_count =[10000,1500000,2000000]
 min_number_boxes_for_particle_size=[6,15,30] 
-no_timesteps_=[8000000,8000000,12000000]
+no_timesteps_=[2000000,8000000,12000000]
 no_timesteps=no_timesteps_[i]
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
@@ -162,10 +165,10 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[6500,5000,6500]
+srd_ratio_tolerance=[2000,5000,6500]
 min_particle_count=[2400,2000,10000]
 max_particle_count =[300000,1500000,2000000]
-no_timesteps_=[10000000,10000000,1500000]
+no_timesteps_=[30000000,10000000,1500000]
 no_timesteps=no_timesteps_[i]
 Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,35,number_of_test_points))])
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
@@ -185,7 +188,8 @@ mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Sol
 #Multipliers for scalings 
 # for solids maybe liquid aswell ?? 
 length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
-mass_multiplier=1000000
+mass_multiplier=10000000
+
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # Tolerance for SRD MD ratio 
 
@@ -193,7 +197,8 @@ mass_multiplier=1000000
 #Physical data 
 tolerance=0.01
 fluid_name='H20'
-scaled_timestep=0.01
+# needed for SRD resolution 
+scaled_timestep=0.001
 rho_s = 1005##kg/m^3
 Temp_visc_multiplier=1.612e-6
 T_K=300* Temp_visc_multiplier
@@ -206,10 +211,13 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[220,330,330]
-min_particle_count=[7000,20000,100000]
-max_particle_count =[30000,1500000,2000000]
-no_timesteps_=[8000000,8000000,16000000]
+srd_ratio_tolerance=[1500,200,3250]
+min_particle_count=[9000,80000,10000]
+max_particle_count =[30000,500000,3000000]
+#### NOTE RETHINK THE TIMESTEPS
+no_timesteps_=[2000000,2500000,5000000]
+# for particle equilibration 
+no_timesteps_=[2000000,8000000,10000000]
 no_timesteps=no_timesteps_[i]
 
 # for 25e-6
@@ -250,8 +258,8 @@ srd_ratio_tolerance=[0,0,0]
 min_particle_count=[10000,10000,100000]
 max_particle_count =[1500000,1500000,2000000]
 # for r=10e-6
-srd_ratio_tolerance=[5000,4000,5800]
-min_particle_count=[1200,13000,100000]
+srd_ratio_tolerance=[1700,4000,1800]
+min_particle_count=[1200,13000,150000]
 max_particle_count =[3000000,1500000,2000000]
 no_timesteps_=[10000000,10000000,1500000]
 no_timesteps=no_timesteps_[i]
@@ -275,7 +283,7 @@ length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)
 # for solids maybe liquid aswell ?? 
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
-mass_multiplier=100
+mass_multiplier=1000
 
 
 #%% The stand alone SRD(-a) calculations 
@@ -452,7 +460,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0
-solution_choice=0
+solution_choice=5
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -473,6 +481,7 @@ particle_z_lower_nd=str(particle_z_lower/lengthscale_parameter_in)
 mass_solid_in=str(mass_solid/SRD_mass_scale_parameter[solution_choice_tuple ,0])
 
 print("Mean free Path: ",mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in)
+print("Mass solid particle:",mass_solid_in)
 print("SRD MD ratio : ",Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in)
 print("SRD particle count:", number_SRD_particles_wrt_pf_cp_mthd_1_neg_in)
 print("Collision cell size:",SRD_box_size_wrt_solid_beads_in)
@@ -530,6 +539,8 @@ else:
 num_proc=8
 max_cores=8
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+# dump script 
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output_dump_on.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
 wall_time=['12:00:00','24:00:00','36:00:00']

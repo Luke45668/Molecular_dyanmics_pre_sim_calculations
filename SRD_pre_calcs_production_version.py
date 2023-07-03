@@ -169,11 +169,11 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 mass_multiplier=100
 min_particle_count=3850 # for phi=0.005
 min_particle_count=39200 # for phi=0.0005
-min_particle_count=250000# phi=0.00005
+# min_particle_count=250000# phi=0.00005
 
-srd_ratio_tolerance=535
+srd_ratio_tolerance=53
 # Tolerance for SRD MD ratio 
-no_timesteps_=[8000000,8000000,8000000]
+no_timesteps_=[2000000,2500000,8000000]
 no_timesteps=no_timesteps_[i]
 
 
@@ -204,8 +204,15 @@ length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
-min_particle_count=100000
-srd_ratio_tolerance=5900
+min_particle_count=1200 # phi=0.005
+srd_ratio_tolerance=5000 # phi=0.0005
+# min_particle_count=14000 # phi=0.0005
+# srd_ratio_tolerance=5000 # phi=0.0005
+min_particle_count=120000 # phi=0.00005
+srd_ratio_tolerance=5000 # phi=0.00005
+#srd_ratio_tolerance=4000# phi=0.00005
+no_timesteps_=[4000000,4000000,5000000]
+no_timesteps=no_timesteps_[i]
 #%% The stand alone SRD(-a) calculations 
 #produce tuples 
 sc_pos_soln=()
@@ -377,7 +384,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0
-solution_choice=0
+solution_choice=6
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -439,8 +446,8 @@ else:
       sim_file_prod_neg_soln(phi,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 #%% pure fluid individual files 
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-max_cores=8
-num_proc=8
+max_cores=4
+num_proc=4
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
