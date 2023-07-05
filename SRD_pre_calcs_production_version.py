@@ -49,6 +49,7 @@ realisation_index_ =np.linspace(0, 10,11)
 tolerance=0.001# for solution error used 0.001 for 0.005, 0.01 for 0.0005
 number_of_test_points =25
 Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,20,number_of_test_points))])
+
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 k_b= 1.380649e-23 #boltzmann in J K^-1
 
@@ -111,9 +112,13 @@ length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscal
 
 mass_multiplier=10000000
 # for the 0.00005 simulations 
-min_particle_count=400000
-srd_ratio_tolerance=6500
-no_timesteps_=[1000000,2000000,4000000]
+min_particle_count=8000 #phi=0.005
+srd_ratio_tolerance=3000 #phi=0.005
+# min_particle_count=70000 #phi=0.0005
+# srd_ratio_tolerance=3600 #phi=0.0005
+min_particle_count=400000 #phi=0.00005
+srd_ratio_tolerance=6500 #phi=0.0005
+no_timesteps_=[4000000,6000000,8000000]
 no_timesteps=no_timesteps_[i]
 
 
@@ -139,9 +144,15 @@ length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales
 mass_multiplier=1000000
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # Tolerance for SRD MD ratio 
-srd_ratio_tolerance=100
-min_particle_count=200000
-srd_ratio_tolerance=6500
+min_particle_count=2300 #phi=0.005
+srd_ratio_tolerance=6000 #phi=0.005
+min_particle_count=25000 #phi=0.0005
+srd_ratio_tolerance=3600 #phi=0.0005
+min_particle_count=200000 #phi=0.00005
+srd_ratio_tolerance=7000 #phi=0.00005
+no_timesteps_=[6000000,8000000,10000000]
+no_timesteps=no_timesteps_[i]
+
 
 #%% H20 Calculations #####
 #Physical data 
@@ -191,6 +202,8 @@ nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 # pure fluid 
+# for hexane 0.005,0.0005
+Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(30,35,number_of_test_points))])
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
 
 
@@ -204,14 +217,14 @@ length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)
 mass_multiplier=100
 
 # Tolerance for SRD MD ratio 
-min_particle_count=1200 # phi=0.005
-srd_ratio_tolerance=5000 # phi=0.0005
-# min_particle_count=14000 # phi=0.0005
+# min_particle_count=2000 # phi=0.005
 # srd_ratio_tolerance=5000 # phi=0.0005
-min_particle_count=120000 # phi=0.00005
-srd_ratio_tolerance=5000 # phi=0.00005
+min_particle_count=17800 # phi=0.0005
+srd_ratio_tolerance=5000 # phi=0.0005
+# min_particle_count=120000 # phi=0.00005
+# srd_ratio_tolerance=5000 # phi=0.00005
 #srd_ratio_tolerance=4000# phi=0.00005
-no_timesteps_=[4000000,4000000,5000000]
+no_timesteps_=[4000000,6000000,8000000]
 no_timesteps=no_timesteps_[i]
 #%% The stand alone SRD(-a) calculations 
 #produce tuples 
@@ -384,7 +397,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0
-solution_choice=6
+solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -446,8 +459,8 @@ else:
       sim_file_prod_neg_soln(phi,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 #%% pure fluid individual files 
 swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-max_cores=4
-num_proc=4
+max_cores=8
+num_proc=8
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
