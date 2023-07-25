@@ -53,10 +53,16 @@ Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,20,number_of_test_
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 k_b= 1.380649e-23 #boltzmann in J K^-1
 
+#for particlesize = 25 microm 
 # determine side length of simulation box
-r_particle =10e-6
-i=2# this index sets the domain size 
+r_particle =25e-6
+i=0# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
+
+# for particle size = 10 micro m 
+# r_particle =10e-6
+# i=0# this index sets the domain size 
+# phi=[0.001,0.0005,0.00005]
 #phi=[0.005,0.0005,0.00005]
 no_timesteps_=[1000000,2000000,4000000]
 no_timesteps=no_timesteps_[i]
@@ -144,12 +150,12 @@ length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales
 mass_multiplier=1000000
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # Tolerance for SRD MD ratio 
-min_particle_count=2300 #phi=0.005
-srd_ratio_tolerance=6000 #phi=0.005
-min_particle_count=25000 #phi=0.0005
-srd_ratio_tolerance=3600 #phi=0.0005
-min_particle_count=200000 #phi=0.00005
-srd_ratio_tolerance=7000 #phi=0.00005
+min_particle_count=9000 #phi=0.005
+srd_ratio_tolerance=1600#phi=0.005
+# min_particle_count=25000 #phi=0.0005
+# srd_ratio_tolerance=3600 #phi=0.0005
+# min_particle_count=200000 #phi=0.00005
+# srd_ratio_tolerance=7000 #phi=0.00005
 no_timesteps_=[6000000,8000000,10000000]
 no_timesteps=no_timesteps_[i]
 
@@ -178,13 +184,13 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 #length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=100
-min_particle_count=3850 # for phi=0.005
-min_particle_count=39200 # for phi=0.0005
+min_particle_count=9000 # for phi=0.005
+#min_particle_count=39200 # for phi=0.0005
 # min_particle_count=250000# phi=0.00005
 
-srd_ratio_tolerance=53
+srd_ratio_tolerance=140
 # Tolerance for SRD MD ratio 
-no_timesteps_=[2000000,2500000,8000000]
+no_timesteps_=[4000000,2500000,8000000]
 no_timesteps=no_timesteps_[i]
 
 
@@ -204,6 +210,7 @@ box_size_vec = np.array([box_side_length/number_boxes_vec])
 # pure fluid 
 # for hexane 0.005,0.0005
 Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(30,35,number_of_test_points))])
+Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,20,number_of_test_points))])
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1.T
 
 
@@ -214,17 +221,17 @@ length_multiplier=np.repeat(np.array([np.logspace(-1.5,0,number_of_lengthscales)
 # for solids maybe liquid aswell ?? 
 #length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
-mass_multiplier=100
+mass_multiplier=1000
 
 # Tolerance for SRD MD ratio 
-# min_particle_count=2000 # phi=0.005
+min_particle_count=9000 # phi=0.005
+srd_ratio_tolerance=270 # phi=0.0005
+# min_particle_count=17800 # phi=0.0005
 # srd_ratio_tolerance=5000 # phi=0.0005
-min_particle_count=17800 # phi=0.0005
-srd_ratio_tolerance=5000 # phi=0.0005
 # min_particle_count=120000 # phi=0.00005
 # srd_ratio_tolerance=5000 # phi=0.00005
 #srd_ratio_tolerance=4000# phi=0.00005
-no_timesteps_=[4000000,6000000,8000000]
+no_timesteps_=[6000000,6000000,8000000]
 no_timesteps=no_timesteps_[i]
 #%% The stand alone SRD(-a) calculations 
 #produce tuples 

@@ -32,20 +32,20 @@ from datetime import datetime
 tolerance=0.01
 Solvent_bead_SRD_box_density_cp_1 =10
 # defining collision cell size range 
-number_boxes_var=100 # 300
-min_number_boxes_for_particle_size=23
-number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
-r_particle =50e-6
-phi=0.005
-N=2
-Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
-box_side_length=np.cbrt(Vol_box_at_specified_phi)
 
 #######################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
 # Start of N2 Calculations #####
 ################################################################
 #%%
 fluid_name='Nitrogen'
+number_boxes_var=100 # 300
+min_number_boxes_for_particle_size=6
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+r_particle =25e-6
+phi=0.005
+N=2
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+box_side_length=np.cbrt(Vol_box_at_specified_phi)
 
 
 ### physical parameters for Nitrogen
@@ -89,10 +89,19 @@ mass_scale= 10000000*rho_s* (lengthscale**3)
 #%%
 # define all inputs for Argon 
 fluid_name='Ar'
+number_boxes_var=100 # 300
+min_number_boxes_for_particle_size=6
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+r_particle =25e-6
+phi=0.005
+N=2
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+box_side_length=np.cbrt(Vol_box_at_specified_phi)
+
 rho_s = 1426.9#621 #kg/m^3
 r_particle =50e-6 #m 
 #T_cel=34.5 #celsius, chosen from paper above 
-number_of_test_points=30
+number_of_test_points=10
 Temp_visc_multiplier=np.array([np.logspace(-9,0,number_of_test_points)]).T
 Temp_visc_multiplier=np.array([np.geomspace(0.0000083768,0.00083768,number_of_test_points)]).T
 T_K=86.5 * Temp_visc_multiplier#+273.15 #Kelvin
@@ -112,16 +121,24 @@ scaled_timestep=0.1
 
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SRD_box_density_cp_1
-length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+#length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 length_multiplier= 10e-2 # chosen to be the midle of the reange 
 lengthscale_parameter = length_multiplier*r_particle
 
 #%% Water calculation 
 
 fluid_name='Water'
+number_boxes_var=100 # 300
+min_number_boxes_for_particle_size=8
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+r_particle =25e-6
+phi=0.005
+N=2
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+box_side_length=np.cbrt(Vol_box_at_specified_phi)
 scaled_timestep=0.01
 tolerance=0.01
-number_of_test_points =50
+number_of_test_points =10
 
 #determine side length of simulaton box 
 
@@ -151,6 +168,14 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 #SRD_box_size_wrt_solid_beads_check=box_size_vec
 #%% Cyclohexane 
 fluid_name='C6H12'
+number_boxes_var=100 # 300
+min_number_boxes_for_particle_size=4
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+r_particle =25e-6
+phi=0.005
+N=2
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+box_side_length=np.cbrt(Vol_box_at_specified_phi)
 rho_s = 764.95 #kg/m^3
 r_particle =50e-6 #m 
 T_cel=34.5 #celsius, chosen from paper above 
@@ -180,10 +205,18 @@ box_size_vec = np.array([box_side_length/number_boxes_vec])
 
 #%% Hexane 
 fluid_name='C6H14'
+number_boxes_var=100 # 300
+min_number_boxes_for_particle_size=4
+number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
+r_particle =25e-6
+phi=0.005
+N=2
+Vol_box_at_specified_phi= N* (4/3)*np.pi*r_particle**3 /phi
+box_side_length=np.cbrt(Vol_box_at_specified_phi)
 rho_s = 700#621 #kg/m^3
 r_particle =50e-6 #m 
 #T_cel=34.5 #celsius, chosen from paper above 
-Temp_visc_multiplier=np.array([np.logspace(-9,0,number_of_test_points)]).T
+Temp_visc_multiplier=np.array([np.logspace(-6,0,number_of_test_points)]).T
 T_K=311* Temp_visc_multiplier#+273.15 #Kelvin
 k_b= 1.380649e-23 #boltzmann in J K^-1
 eta_s_NIST= 0.00046729*Temp_visc_multiplier	 #Pa s 
@@ -234,6 +267,7 @@ mean_free_path_to_box_ratio_pos= mean_free_path_pf_SRD_particles_cp_mthd_1_pos/b
 SRD_MD_Ratio_neg= SRD_timestep_cp_1_based_on_sphere_neg_nd/scaled_timestep
 
 #%% plot Sc vs kn for various temp visc scalings
+plt.rcParams.update({'font.size': 25})
 plt.rcParams.update({
     "text.usetex": True,
     "font.family": "Helvetica"
@@ -255,10 +289,10 @@ for z in range(0,number_of_test_points):
         
         ax1.set_xscale('linear')
         ax1.set_yscale('log')
-        ax1.set_xlabel('$Kn\  [-]$', rotation='horizontal',ha='right',fontsize=fontsize)
-        ax1.set_ylabel( '$Sc\ [-]$', rotation='horizontal',ha='right',fontsize=fontsize)
+        ax1.set_xlabel('$Kn\  [-]$', rotation='horizontal',ha='right')#,fontsize=fontsize)
+        ax1.set_ylabel( '$Sc\ [-]$', rotation='horizontal',ha='right')#,fontsize=fontsize)
         ax1.grid('on')
-        ax1.legend(loc='right',bbox_to_anchor=(1.1, 0.5))
+        ax1.legend(loc='right',bbox_to_anchor=(1.3, 0.5))
         
 plt.show()
 
@@ -349,6 +383,7 @@ for z in range(0,number_of_test_points):
 plt.show()
 
 #%% plot SRD MD vs collision cell size for various temp visc scalings
+plt.rcParams.update({'font.size': 25})
 plt.rcParams.update({
     "text.usetex": True,
     "font.family": "Helvetica"
@@ -357,7 +392,7 @@ fig=plt.figure(figsize=(15,6))
 fontsize=20
 gs=GridSpec(nrows=1,ncols=1)
 
-fig.suptitle(fluid_name+': $\\frac{\Delta t_{SRD}}{\Delta t_{MD}}\ vs$ $\\frac{\Delta x}{\\bar{\ell}}\ $',size='x-large', wrap=True)
+#fig.suptitle(fluid_name+': $\\frac{\Delta t_{SRD}}{\Delta t_{MD}}\ vs$ $\\frac{\Delta x}{\\bar{\ell}}\ $',size='x-large', wrap=True)
 
 ax1= fig.add_subplot(gs[0]) 
 for z in range(0,number_of_test_points):
@@ -370,10 +405,10 @@ for z in range(0,number_of_test_points):
         
         ax1.set_xscale('linear')
         ax1.set_yscale('log')
-        ax1.set_xlabel('$\\frac{\Delta x}{\\bar{\ell}}\  [\\tau]$', rotation='horizontal',ha='right',fontsize=fontsize)
-        ax1.set_ylabel('$\\frac{\Delta t_{SRD}}{\Delta t_{MD}}\ [-]$', rotation='horizontal',ha='right',fontsize=fontsize)
+        ax1.set_xlabel('$\\frac{\Delta x}{\\bar{\ell}}\  [\\tau]$', rotation='horizontal',ha='right')#fontsize=fontsize)
+        ax1.set_ylabel('$\\frac{\Delta t_{SRD}}{\Delta t_{MD}}\ [-]$', rotation='horizontal',ha='right')#fontsize=fontsize)
         ax1.grid('on')
-        ax1.legend(loc='best')
+        ax1.legend(loc='best',bbox_to_anchor=(1.3, 1.05))
         
 plt.show()
 

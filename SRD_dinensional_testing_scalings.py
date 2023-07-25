@@ -37,7 +37,7 @@ number_of_test_points =10
 Solvent_bead_SRD_box_density_cp_1 = np.array([(np.linspace(10,100,number_of_test_points))])
 number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 number_boxes_var=100
-min_number_boxes_for_particle_size=23
+min_number_boxes_for_particle_size=6
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size,(min_number_boxes_for_particle_size-1)+number_boxes_var,number_boxes_var)
 
 #determine side length of simulaton box 
@@ -112,6 +112,33 @@ plt.rcParams.update({
     "font.family": "Helvetica"
 })
 from petersen_plotting import *
+plt.rcParams.update({'font.size': 25})
+def sc_vs_mfp_to_collision_cell(mean_free_path_to_box_ratio_pos,mean_free_path_to_box_ratio_neg,fluid_name,number_of_test_points,sc_neg_soln,sc_pos_soln,Solvent_bead_SRD_box_density_cp_1):
+    # Sc vs box size/lengthscale
+    fig=plt.figure(figsize=(15,6))
+    gs=GridSpec(nrows=1,ncols=1)
+    fontsize=30
+
+    #fig.suptitle(fluid_name+': $Sc\ vs$ $\\frac{\Delta x}{\\bar{\ell}}\\ $',size='large', wrap=True)
+
+    ax1= fig.add_subplot(gs[0]) 
+    for z in range(0,number_of_test_points):
+        
+        ax1.plot(mean_free_path_to_box_ratio_neg[z,:],sc_neg_soln[z,:],label='$M$={}'.format(int(Solvent_bead_SRD_box_density_cp_1[0,z])),marker='x')
+        
+        #ax1.legend(Solvent_bead_SRD_box_density_cp_1[0,z])
+       # ax1.plot(mean_free_path_to_box_ratio_pos[z,:],sc_pos_soln[z,:],label='M+={}'.format(Solvent_bead_SRD_box_density_cp_1[0,z]))
+        
+        
+        ax1.set_xscale('linear')
+        ax1.set_yscale('log')
+        ax1.set_xlabel('$Kn\  [-]$', rotation='horizontal',ha='right',fontsize=fontsize)
+        ax1.set_ylabel( '$Sc\ [-]$', rotation='horizontal',ha='right',fontsize=fontsize)
+        ax1.grid('on')
+        ax1.legend(loc='right',bbox_to_anchor=(1.25, 0.5))
+        
+    plt.show()
+        
 
 sc_vs_mfp_to_collision_cell(mean_free_path_to_box_ratio_pos,mean_free_path_to_box_ratio_neg,fluid_name,number_of_test_points,sc_neg_soln,sc_pos_soln,Solvent_bead_SRD_box_density_cp_1)
 
