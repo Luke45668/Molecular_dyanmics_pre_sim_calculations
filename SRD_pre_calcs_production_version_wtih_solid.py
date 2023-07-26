@@ -42,7 +42,8 @@ rtol=0.00001
 swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
 #alternate set of swap rates we can only run 9 as we have a limit of 9 sims per node
 #swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
-swap_number = np.array([1,10,100,1000])
+#swap_number = np.array([1,10,100,1000])
+swap_number = np.array([1])
 dump_freq=10000 # if you change the timestep rememebr to chaneg this 
 thermo_freq = 10000
 realisation_index_ =np.linspace(0, 10,11)
@@ -55,12 +56,12 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 # determine side length of simulation box
 
 r_particle =25e-6
-i=0# this index sets the domain size 
+i=2# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 
-r_particle =10e-6
-i=0# this index sets the domain size 
-phi=[0.0008,0.0005,0.00005]
+# r_particle =10e-6
+# i=0# this index sets the domain size 
+# phi=[0.0008,0.00008,0.000008]
 #phi=[0.005,0.0005,0.00005]
 no_timesteps_=[1000000,2000000,4000000]
 # for particle equilibration runs
@@ -224,23 +225,31 @@ eta_s=eta_s_NIST * Temp_visc_multiplier
 nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 #for r=25e-6
-srd_ratio_tolerance=[0,0,0]
-min_particle_count=[10000,10000,100000]
-max_particle_count =[1500000,1500000,2000000]
+srd_ratio_tolerance=[1400,1400,2000]
+min_particle_count=[9000,90000,400000]
+max_particle_count =[15000,100000,500000]
 # for r=10e-6
-srd_ratio_tolerance=[6000,2000,3250]
-min_particle_count=[9000,80000,10000]
-max_particle_count =[10000,100000,3000000]
+# srd_ratio_tolerance=[6000,7750,11500]
+# min_particle_count=[9000,90000,400000]
+# max_particle_count =[30000,100000,500000]
+# spring_constant fitting for H20 10micro
+a =-0.43895231891678094
+b=-2.2232916349095766
+spring_constant= (np.log(0.0001)-b)/a
+# spring_constant fitting for H20 25micro
+a=-0.4283008161334138
+b=-2.1597009198454598
+spring_constant= (np.log(0.0001)-b)/a
 #### NOTE RETHINK THE TIMESTEPS
 no_timesteps_=[2000000,2500000,5000000]
 # for particle equilibration 
-no_timesteps_=[8000000,8000000,10000000]
+no_timesteps_=[8000000,10000000,12000000]
 
 no_timesteps=no_timesteps_[i]
 
-# for 25e-6
-min_number_boxes_for_particle_size=[12,25,56] 
-#for 10e-6 
+# # for 25e-6
+# min_number_boxes_for_particle_size=[12,25,56] 
+# #for 10e-6 
 min_number_boxes_for_particle_size=[8,14,30] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
@@ -481,7 +490,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0  
-solution_choice=0  
+solution_choice=8
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -511,6 +520,8 @@ print("Real Particle size", r_particle)
 print("Mass fluid particle:", mass_fluid_particle_wrt_pf_cp_mthd_1_in)
 print("Simulation domain size:",box_side_length_scaled[solution_choice_tuple,0])
 print("Check M>=10",( number_SRD_particles_wrt_pf_cp_mthd_1_neg_in/((box_side_length_scaled[solution_choice_tuple,0])**3/(SRD_box_size_wrt_solid_beads_in**3))))
+print("Spring constant",spring_constant)
+print("phi",phi[i] )
 #%% Produce run files 
 from sim_file_producer_SRD import *
 
@@ -564,12 +575,11 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_
 # dump script 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output_dump_on.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
-swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-
+swap_rate = np.array([3,7,15,30,60,150,300,600])
+spring_constant=np.repeat(spring_constant,swap_rate.size)
 wall_time=['12:00:00','24:00:00','36:00:00']
 # for spring constant tests use swap frequency of 15
-spring_constant= np.array([0.01,0.1,1,10,20,40,50,60,100,1000])
-swap_rate = np.array([15,15,15,15,15,15,15,15,15,15])
+#spring_constant= np.array([0.01,0.1,1,10,20,40,50,60,100,1000])
 swap_number = np.array([1])
 # for long runs 
 #wall_time=['48:00:00','48:00:00','48:00:00']
