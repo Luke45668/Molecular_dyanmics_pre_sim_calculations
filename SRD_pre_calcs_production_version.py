@@ -38,11 +38,13 @@ chunk = 20
 atol=0.01
 rtol=0.00001
 swap_rate = np.array([3,7,15,30,60,300,600,900,1200])# values chosen from original mp paper
+#swap_number = np.array([1,10,100,1000])#
 #alternate set of swap rates we can only run 9 as we have a limit of 9 sims per node
 #swap_rate = np.array([5,9,12,22,45,180,450,750,1050])
-swap_number = np.array([1,10,100,1000])
+#swap_rate=np.array([15])
+swap_number = np.array([1])
 dump_freq=1000 # if you change the timestep rememebr to chaneg this 
-thermo_freq = 10000
+thermo_freq = 10
  # Nitrogen 
 
 realisation_index_ =np.linspace(0, 10,11)
@@ -114,7 +116,7 @@ mass_fluid_particle_wrt_pf_cp_mthd_1=(rho_s * (box_size_vec**3))/Solvent_bead_SR
 #Multipliers for scalings 
 length_multiplier=np.repeat(np.array([np.logspace(-2.5,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 # for solids maybe liquid aswell ?? 
-# nlength_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
+#length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=10000000
 # for the 0.00005 simulations 
@@ -122,9 +124,11 @@ min_particle_count=8000 #phi=0.005
 srd_ratio_tolerance=3000 #phi=0.005
 # min_particle_count=70000 #phi=0.0005
 # srd_ratio_tolerance=3600 #phi=0.0005
-min_particle_count=400000 #phi=0.00005
-srd_ratio_tolerance=6500 #phi=0.0005
+# min_particle_count=400000 #phi=0.00005
+# srd_ratio_tolerance=6500 #phi=0.0005
 no_timesteps_=[4000000,6000000,8000000]
+# for VACF run 
+no_timesteps_=[2000000,3000000,4000000]
 no_timesteps=no_timesteps_[i]
 
 
@@ -185,12 +189,18 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 
 mass_multiplier=100
 min_particle_count=9000 # for phi=0.005
-#min_particle_count=39200 # for phi=0.0005
-# min_particle_count=250000# phi=0.00005
-
 srd_ratio_tolerance=140
+# min_particle_count=39200 # for phi=0.0005
+# srd_ratio_tolerance=400
+# min_particle_count=250000# phi=0.00005
+# srd_ratio_tolerance=547
+
+
+
 # Tolerance for SRD MD ratio 
 no_timesteps_=[4000000,2500000,8000000]
+# for VACF run 
+no_timesteps_=[2000000,3000000,4000000]
 no_timesteps=no_timesteps_[i]
 
 
@@ -436,7 +446,8 @@ data_transfer_instructions=''
 num_task_req=''
 i_=0
 j_=3
-wall_time=['12:00:00','24:00:00','36:00:00']
+# for VACf run 
+wall_time=['12:00:00','12:00:00','12:00:00']
 
 ram_requirement=['16G','16G','20G']
 tempdir_req='20G'
@@ -465,9 +476,9 @@ else:
       print("Core request satisfactory, producing simulation submission script ")
       sim_file_prod_neg_soln(phi,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 #%% pure fluid individual files 
-swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
-max_cores=8
-num_proc=8
+swap_rate = np.array([3,7,15,30,60,150,300,600])
+max_cores=4
+num_proc=4
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
