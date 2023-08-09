@@ -8,7 +8,7 @@ This could be optimised by using indirect BOOLEAN if statements look up bookmark
 @author: lukedebono
 """
 import numpy as np 
-def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd_ratio_tolerance,max_particle_count,number_SRD_particles_wrt_pf_cp_mthd_1_pos,number_SRD_particles_wrt_pf_cp_mthd_1_neg,mean_free_path_pf_SRD_particles_cp_mthd_1_neg,mean_free_path_pf_SRD_particles_cp_mthd_1_pos,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg,Solvent_bead_SRD_box_density_cp_1,tolerance,SRD_box_size_wrt_solid_beads,comparison_pos,comparison_neg):
+def MPCD_constraints(Sc_tolerance,no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd_ratio_tolerance,max_particle_count,number_SRD_particles_wrt_pf_cp_mthd_1_pos,number_SRD_particles_wrt_pf_cp_mthd_1_neg,mean_free_path_pf_SRD_particles_cp_mthd_1_neg,mean_free_path_pf_SRD_particles_cp_mthd_1_pos,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg,Solvent_bead_SRD_box_density_cp_1,tolerance,SRD_box_size_wrt_solid_beads,comparison_pos,comparison_neg):
     
       
       
@@ -175,7 +175,7 @@ def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd
             
             #positive 
             
-            if sc_neg_soln[z,i]<100: # was 100 but wagner paper says 13 is good 
+            if sc_neg_soln[z,i]<Sc_tolerance: # was 100 but wagner paper says 13 is good 
                 Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z,i] = float("NAN")
                 mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z,i]= float("NAN")
                 #fail_count_pos_Sc_num=fail_count_pos_Sc_num+1
@@ -184,7 +184,7 @@ def MPCD_constraints(no_timesteps,min_particle_count,sc_neg_soln,sc_pos_soln,srd
             
             # negative 
             
-            if sc_pos_soln[z,i]<100: # was 100 but wagner pape says 13 is good 
+            if sc_pos_soln[z,i]<Sc_tolerance: # was 100 but wagner pape says 13 is good 
                  #print('Solution Fail!7')
                  Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z,i] = float("NAN")
                  mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z,i]= float("NAN")

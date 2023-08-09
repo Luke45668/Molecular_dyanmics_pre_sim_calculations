@@ -55,13 +55,13 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 
 # determine side length of simulation box
 
-# r_particle =25e-6
-# i=2# this index sets the domain size 
-# phi=[0.005,0.0005,0.00005]
+r_particle =25e-6
+i=1# this index sets the domain size 
+phi=[0.005,0.01,0.05]
 
-r_particle =10e-6
-i=2# this index sets the domain size 
-phi=[0.0008,0.00008,0.000008]
+# r_particle =10e-6
+# i=2# this index sets the domain size 
+# phi=[0.0008,0.00008,0.000008]
 #phi=[0.005,0.0005,0.00005]
 no_timesteps_=[1000000,2000000,4000000]
 # for particle equilibration runs
@@ -194,7 +194,7 @@ number_of_M_cp_1=Solvent_bead_SRD_box_density_cp_1.shape[1]
 # for 25e-6
 min_number_boxes_for_particle_size=[12,25,56] 
 #for 10e-6 
-min_number_boxes_for_particle_size=[5,12,23] 
+#min_number_boxes_for_particle_size=[5,12,23] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 
@@ -202,7 +202,7 @@ box_size_vec = np.array([box_side_length/number_boxes_vec])
 # with solid particles 
 mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
 
-
+collision_cell_bound_enforcer(box_side_length,number_boxes_vec,r_particle)
 #Multipliers for scalings 
 # for solids maybe liquid aswell ?? 
 length_multiplier=np.repeat(np.array([np.logspace(-3,-1.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -226,12 +226,13 @@ nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 #for r=25e-6
 # srd_ratio_tolerance=[1400,4000,8500]
-# min_particle_count=[9000,20000,66000]
-# max_particle_count =[15000,100000,500000]
-#for r=10e-6
-srd_ratio_tolerance=[6000,7750,16000]
-min_particle_count=[9000,90000,290000]
-max_particle_count =[30000,100000,300000]
+min_particle_count=[90,2,66]
+max_particle_count =[1500000,100000000,500000]
+srd_ratio_tolerance=[152,140,130]
+# #for r=10e-6
+# srd_ratio_tolerance=[6000,7750,16000]
+# min_particle_count=[9000,90000,290000]
+# max_particle_count =[30000,100000,300000]
 # spring_constant fitting for H20 10micro
 a =-0.43895231891678094
 b=-2.2232916349095766
@@ -243,21 +244,22 @@ spring_constant= (np.log(0.0001)-b)/a
 #### NOTE RETHINK THE TIMESTEPS
 no_timesteps_=[2000000,2500000,5000000]
 # for particle equilibration 
-no_timesteps_=[8000000,10000000,12000000]
+no_timesteps_=[000000,10000000,4000000]
 
 no_timesteps=no_timesteps_[i]
 
 # # for 25e-6
-# min_number_boxes_for_particle_size=[12,25,56] 
+min_number_boxes_for_particle_size=[24,19,12] 
 # #for 10e-6 
-min_number_boxes_for_particle_size=[8,10,15] 
+#min_number_boxes_for_particle_size=[8,10,15] 
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 # with solid particles 
 mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
 
-
+collision_cell_bound_enforcer(box_side_length,number_boxes_vec,r_particle)
+#Multipliers for scalings 
 
 #Multipliers for scalings 
 # for solids maybe liquid aswell ?? 
@@ -266,6 +268,9 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 #length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=100
+Sc_tolerance_=[90,90,60] # 16 is acceptable according to literature 
+Sc_tolerance=Sc_tolerance_[i]
+
 
 
 #%% Hexane Calculations #####
@@ -422,7 +427,7 @@ locations_of_non_nan_pos=()
 
 for z in range(0,number_of_lengthscales):
     
-    MPCD_constraints(no_timesteps,min_particle_count[i],sc_neg_soln[z],sc_pos_soln[z],srd_ratio_tolerance[i],max_particle_count[i],number_SRD_particles_wrt_pf_cp_mthd_1_pos[z],number_SRD_particles_wrt_pf_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z],Solvent_bead_SRD_box_density_cp_1,tolerance,SRD_box_size_wrt_solid_beads[z],comparison_pos[z],comparison_neg[z])
+    MPCD_constraints(Sc_tolerance,no_timesteps,min_particle_count[i],sc_neg_soln[z],sc_pos_soln[z],srd_ratio_tolerance[i],max_particle_count[i],number_SRD_particles_wrt_pf_cp_mthd_1_pos[z],number_SRD_particles_wrt_pf_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_neg[z],mean_free_path_pf_SRD_particles_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z],Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z],Solvent_bead_SRD_box_density_cp_1,tolerance,SRD_box_size_wrt_solid_beads[z],comparison_pos[z],comparison_neg[z])
     count_passed_constraints_neg.append(np.count_nonzero(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg[z]))) 
     count_passed_constraints_pos.append(np.count_nonzero(~np.isnan(Number_MD_steps_per_SRD_with_pf_cp_mthd_1_pos[z])) )
   
@@ -490,7 +495,7 @@ for z in range(0,index_of_tuples_passed.size):
 
 #%% Selecting the solutions 
 solution_choice_tuple=0  
-solution_choice=1
+solution_choice=0
 locations_of_non_nan_neg_select=locations_of_non_nan_neg[solution_choice_tuple][solution_choice]##
 solution_row=locations_of_non_nan_neg_select[0]
 solution_column=locations_of_non_nan_neg_select[1]
@@ -540,7 +545,7 @@ wall_time=['12:00:00','24:00:00','48:00:00']
 # for long runs 
 wall_time=['48:00:00','48:00:00','48:00:00']
 
-ram_requirement=['16G','16G','20G']
+ram_requirement=['20G','20G','20G']
 tempdir_req='20G'
 # MYRIAD paths 
 #laptop path 
@@ -577,7 +582,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 swap_rate = np.array([3,7,15,30,60,150,300,600])
 spring_constant=np.repeat(spring_constant,swap_rate.size)
-wall_time=['12:00:00','36:00:00','48:00:00']
+wall_time=['48:00:00','48:00:00','48:00:00']
 # for spring constant tests use swap frequency of 15
 #spring_constant= np.array([0.01,0.1,1,10,20,40,50,60,100,1000])
 swap_number = np.array([1])
@@ -641,10 +646,10 @@ else:
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 num_proc=80
-swap_rate = np.array([3,7,15,30,60,150,300,600,900,1200])
+swap_rate = np.array([3,7,15,30,60,150,300,600])
 ram_requirement='2.4G'
 # max wall time on KAthleen is 48hrs for 41-240 nodes 
-wall_time=['12:00:00','24:00:00','36:00:00']
+wall_time=['48:00:00','48:00:00','48:00:00']
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
@@ -655,3 +660,5 @@ else:
       sim_file_prod_neg_soln_solid_inc_individual_kathleen(phi_,hypthread,mass_solid_in,particle_x_upper_nd,particle_y_upper_nd,particle_z_upper_nd,particle_x_lower_nd,particle_y_lower_nd,particle_z_lower_nd,solution_choice_tuple,lengthscale_parameter_in,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement,prod_run_file_name,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,SRD_box_size_wrt_solid_beads_in,mean_free_path_pf_SRD_particles_cp_mthd_1_neg_in,scaled_timestep,mass_fluid_particle_wrt_pf_cp_mthd_1_in,Number_MD_steps_per_SRD_with_pf_cp_mthd_1_neg_in,number_SRD_particles_wrt_pf_cp_mthd_1_neg_in,swap_number,i_,j_,swap_rate,box_side_length_scaled[solution_choice_tuple,0],scaled_temp,eta_s,Path_2_shell_scirpts,Path_2_generic,fluid_name,r_particle_scaled_in)
                                                          
 
+
+# %%
