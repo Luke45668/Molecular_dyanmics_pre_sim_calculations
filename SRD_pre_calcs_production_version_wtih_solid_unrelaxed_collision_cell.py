@@ -59,9 +59,13 @@ r_particle =25e-6
 i=0# this index sets the domain size 
 phi=[0.005,0.01,0.05,0.1]
 
-# r_particle =10e-6
-# i=2# this index sets the domain size 
-# phi=[0.0008,0.00008,0.000008]
+r_particle =50e-6
+i=0# this index sets the domain size 
+phi=[0.008,0.08,0.009,0.01]
+
+r_particle =10e-6
+i=2# this index sets the domain size 
+phi=[0.008,0.0008,0.00008,0.01]
 #phi=[0.005,0.0005,0.00005]
 # no_timesteps_=[1000000,2000000,4000000]
 # # for particle equilibration runs
@@ -94,6 +98,16 @@ def collision_cell_bound_enforcer(box_side_length,number_boxes_vec,r_particle):
     print(collision_cell_size)
     print(r_particle/2)
     collision_cell_boolean= collision_cell_size > (r_particle/2)
+    if np.any(collision_cell_boolean)==True:
+        print("not enough collision cells to resolve around the particle")
+    else: 
+        print("Resolution achieved")
+
+def collision_cell_bound_enforcer_large(box_side_length,number_boxes_vec,r_particle):
+    collision_cell_size=box_side_length/number_boxes_vec
+    print(collision_cell_size)
+    print(r_particle*2)
+    collision_cell_boolean= collision_cell_size > (r_particle*2)
     if np.any(collision_cell_boolean)==True:
         print("not enough collision cells to resolve around the particle")
     else: 
@@ -226,16 +240,16 @@ nu_s = eta_s/rho_s
 temp_energy_to_nu_s_ratio= (k_b*T_K )/(eta_s_NIST/rho_s)
 #for r=25e-6
 # srd_ratio_tolerance=[1400,4000,8500]
-min_particle_count=[90,2,66,500]
-max_particle_count =[1500000,100000000,500000,500000]
-# timestep 0.001
-srd_ratio_tolerance=[152,154,130,190]
+# min_particle_count=[90,2,66,500]
+# max_particle_count =[1500000,100000000,500000,500000]
+# # timestep 0.001
+# srd_ratio_tolerance=[152,154,130,190]
 #timestep 0.01
 #srd_ratio_tolerance=[14,140,130,190]
 # #for r=10e-6
-# srd_ratio_tolerance=[6000,7750,16000]
-# min_particle_count=[9000,90000,290000]
-# max_particle_count =[30000,100000,300000]
+srd_ratio_tolerance=[1500,1500,3000]
+min_particle_count=[6000,55000,300000]
+max_particle_count =[2000000,10000000,300000000]
 # spring_constant fitting for H20 10micro
 a =-0.43895231891678094
 b=-2.2232916349095766
@@ -244,26 +258,30 @@ spring_constant= (np.log(0.0001)-b)/a
 a=-0.4283008161334138
 b=-2.1597009198454598
 spring_constant= (np.log(0.0001)-b)/a
-#### NOTE RETHINK THE TIMESTEPS
-no_timesteps_=[2000000,2500000,5000000]
+# #### NOTE RETHINK THE TIMESTEPS
+# no_timesteps_=[2000000,2500000,5000000]
 # for particle equilibration 
-no_timesteps_=[3300000,6000000,4000000,4000000]
+#for 25e-6
+no_timesteps_=[6000000,6000000,4000000,4000000]
 
 no_timesteps=no_timesteps_[i]
 
 # # for 25e-6
 min_number_boxes_for_particle_size=[24,19,12,8] 
 # #for 10e-6 
-#min_number_boxes_for_particle_size=[8,10,15] 
+min_number_boxes_for_particle_size=[6,11,24] 
+no_timesteps_=[8000000,8000000,10000000]
+
+no_timesteps=no_timesteps_[i]
 
 number_boxes_vec=np.linspace(min_number_boxes_for_particle_size[i],(min_number_boxes_for_particle_size[i]-1)+number_boxes_var,number_boxes_var)
 box_size_vec = np.array([box_side_length/number_boxes_vec])
 # with solid particles 
 mass_fluid_particle_wrt_pf_cp_mthd_1= (rho_s *  Vol_box_minus_particle_vol)/(Solvent_bead_SRD_box_density_cp_1.T *(number_boxes_vec**3) )#
 
-collision_cell_bound_enforcer(box_side_length,number_boxes_vec,r_particle)
+#collision_cell_bound_enforcer(box_side_length,number_boxes_vec,r_particle)
 #Multipliers for scalings 
-
+collision_cell_bound_enforcer_large(box_side_length,number_boxes_vec,r_particle)
 #Multipliers for scalings 
 # for solids maybe liquid aswell ?? 
 length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)]).T,number_boxes_var,axis=1)
@@ -271,7 +289,11 @@ length_multiplier=np.repeat(np.array([np.logspace(-1,0,number_of_lengthscales)])
 #length_multiplier=np.repeat(np.array([np.logspace(-3.5,-2.5,number_of_lengthscales)]).T,number_boxes_var,axis=1)
 
 mass_multiplier=100
+# 25e-6
 Sc_tolerance_=[90,90,60,100] # 16 is acceptable according to literature 
+#10e-6 
+Sc_tolerance_=[90,90,60,100]
+
 Sc_tolerance=Sc_tolerance_[i]
 
 
@@ -585,7 +607,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_solid_inc_
 #no_wall_solid_inc_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file 
 swap_rate = np.array([3,7,15,30,60,150,300,600])
 spring_constant=np.repeat(spring_constant,swap_rate.size)
-wall_time=['48:00:00','48:00:00','48:00:00']
+wall_time=['12:00:00','36:00:00','48:00:00']
 # for spring constant tests use swap frequency of 15
 #spring_constant= np.array([0.01,0.1,1,10,20,40,50,60,100,1000])
 swap_number = np.array([1])
@@ -652,8 +674,11 @@ num_proc=80
 swap_rate = np.array([3,7,15,30,60,150,300,600])
 spring_constant=np.repeat(spring_constant,swap_rate.size)
 ram_requirement='2.4G'
-# max wall time on KAthleen is 48hrs for 41-240 nodes 
+# max wall time on KAthleen is 48hrs for 41-240 cores 
 wall_time=['48:00:00','40:00:00','28:00:00','12:00:00']
+# 10 micrometre particle 
+wall_time=['6:00:00','40:00:00','48:00:00','12:00:00']
+
 np_req=str(num_proc)
 phi_ = str(phi[i])
 if (int(np_req)) > max_cores:
