@@ -1,0 +1,332 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Monday 25th Sept 2023
+
+This script will does all the pre calcs for the SRD fluid mappings and then produces the simulation run files for myriad. 
+
+
+@author: lukedebono
+"""
+#%%
+import os
+import numpy as np
+
+import matplotlib.pyplot as plt
+import regex as re
+import pandas as pd
+
+# plt.rcParams.update({
+#     "text.usetex": True,
+#     "font.family": "Helvetica"
+# })
+from mpl_toolkits import mplot3d
+from matplotlib.gridspec import GridSpec
+#import seaborn as sns
+import math as m
+import scipy.stats
+from datetime import datetime
+from sim_file_producer_SRD import *
+
+#%% H20 parameters
+
+collision_cell_size_bar= 1
+fluid_particle_mass_bar= 1 
+simulation_temp_bar=1
+fluid_particle_number_density= 5 
+fluid_name='H20'
+real_fluid_density = 1000 # H20 
+T_K=300 # fluid temp at density listed
+k_b=1.38e-23
+energy_scale= T_K * k_b / simulation_temp_bar
+r_particle=2.5e-5
+n_particle= 2
+lengthscale= 0.25 * r_particle
+mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
+time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
+nu_bar=0.52
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+md_timestep=0.01
+collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
+phi=0.0577777778#np.linspace(0.04,0.06,10)
+
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
+print(box_size_bar/collision_cell_size_bar)
+box_size_bar=np.round(box_size_bar)
+srd_count= (box_size_bar**3 )* fluid_particle_number_density
+
+nu= nu_bar * (lengthscale**2)/time_scale
+
+print("time_scale",time_scale)
+print("lengthscale",lengthscale)
+print("mass scale",mass_scale)
+print("energy scale",energy_scale)
+#print(collision_time_positive_bar)
+#print(collision_time_negative_bar)
+print("collision ratio",collision_ratio)
+print("box size",box_size_bar)
+print("srd count",srd_count)
+
+#%% Argon parameters
+
+collision_cell_size_bar= 1
+fluid_particle_mass_bar= 1 
+simulation_temp_bar=1
+fluid_particle_number_density= 5 
+fluid_name='Ar'
+real_fluid_density = 1426.9 # H20 
+T_K=86.5 # fluid temp at density listed
+k_b=1.38e-23
+energy_scale= T_K * k_b / simulation_temp_bar
+r_particle=2.5e-5
+n_particle= 2
+lengthscale= 0.25 * r_particle
+mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
+time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
+nu_bar=0.52
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+md_timestep=0.01
+print(collision_ratio)
+collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
+phi=0.0577777778#np.linspace(0.04,0.06,10)
+
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
+print(box_size_bar/collision_cell_size_bar)
+box_size_bar=np.round(box_size_bar)
+srd_count= (box_size_bar**3 )* fluid_particle_number_density
+
+nu= nu_bar * (lengthscale**2)/time_scale
+
+print("time_scale",time_scale)
+print("lengthscale",lengthscale)
+print("mass scale",mass_scale)
+print("energy scale",energy_scale)
+#print(collision_time_positive_bar)
+#print(collision_time_negative_bar)
+print("collision ratio",collision_ratio)
+print("box size",box_size_bar)
+print("srd count",srd_count)
+
+#%% Nitrogen parameters
+
+collision_cell_size_bar= 1
+fluid_particle_mass_bar= 1 
+simulation_temp_bar=1
+fluid_particle_number_density= 5 
+fluid_name='N2'
+real_fluid_density =  847 # H20 
+T_K=72.2  # fluid temp at density listed
+k_b=1.38e-23
+energy_scale= T_K * k_b / simulation_temp_bar
+r_particle=2.5e-5
+n_particle= 2
+lengthscale= 0.25 * r_particle
+mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
+time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
+nu_bar=0.52
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+md_timestep=0.01
+collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
+phi=0.0577777778#np.linspace(0.04,0.06,10)
+
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
+print(box_size_bar/collision_cell_size_bar)
+box_size_bar=np.round(box_size_bar)
+srd_count= (box_size_bar**3 )* fluid_particle_number_density
+
+nu= nu_bar * (lengthscale**2)/time_scale
+
+print("time_scale",time_scale)
+print("lengthscale",lengthscale)
+print("mass scale",mass_scale)
+print("energy scale",energy_scale)
+#print(collision_time_positive_bar)
+#print(collision_time_negative_bar)
+print("collision ratio",collision_ratio)
+print("box size",box_size_bar)
+print("srd count",srd_count)
+#%% Hexane parameters
+
+collision_cell_size_bar= 1
+fluid_particle_mass_bar= 1 
+simulation_temp_bar=1
+fluid_particle_number_density= 5 
+fluid_name='C6H14'
+real_fluid_density = 700# H20 
+T_K=311 # fluid temp at density listed
+k_b=1.38e-23
+energy_scale= T_K * k_b / simulation_temp_bar
+r_particle=2.5e-5
+n_particle= 2
+lengthscale= 0.25 * r_particle
+mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
+time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
+nu_bar=0.52
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+md_timestep=0.01
+collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
+phi=0.0577777778#np.linspace(0.04,0.06,10)
+
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
+print(box_size_bar/collision_cell_size_bar)
+box_size_bar=np.round(box_size_bar)
+srd_count= (box_size_bar**3 )* fluid_particle_number_density
+
+nu= nu_bar * (lengthscale**2)/time_scale
+
+print("time_scale",time_scale)
+print("lengthscale",lengthscale)
+print("mass scale",mass_scale)
+print("energy scale",energy_scale)
+#print(collision_time_positive_bar)
+#print(collision_time_negative_bar)
+print("collision ratio",collision_ratio)
+print("box size",box_size_bar)
+print("srd count",srd_count)
+
+#%% cycloHexane parameters
+
+collision_cell_size_bar= 1
+fluid_particle_mass_bar= 1 
+simulation_temp_bar=1
+fluid_particle_number_density= 5 
+fluid_name='C6H12'
+real_fluid_density = 764.95 # H20 
+T_K=307.65 # fluid temp at density listed
+k_b=1.38e-23
+energy_scale= T_K * k_b / simulation_temp_bar
+r_particle=2.5e-5
+n_particle= 2
+lengthscale= 0.25 * r_particle
+mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
+time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
+nu_bar=0.52
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+md_timestep=0.01
+collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
+phi=0.0577777778#np.linspace(0.04,0.06,10)
+
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
+print(box_size_bar/collision_cell_size_bar)
+box_size_bar=np.round(box_size_bar)
+srd_count= (box_size_bar**3 )* fluid_particle_number_density
+
+nu= nu_bar * (lengthscale**2)/time_scale
+
+print("time_scale",time_scale)
+print("lengthscale",lengthscale)
+print("mass scale",mass_scale)
+print("energy scale",energy_scale)
+#print(collision_time_positive_bar)
+#print(collision_time_negative_bar)
+print("collision ratio",collision_ratio)
+print("box size",box_size_bar)
+print("srd count",srd_count)
+ 
+#%% MYRIAD paths sim file production 
+#laptop path 
+#Path_2_shell_scirpts='/Users/lukedebono/documents/LAMMPS_projects_mac_book/OneDrive_1_24-02-2023/Shell_scripts_for_MYRIAD'
+#imac path 
+Path_2_shell_scirpts='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
+abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps-23Jun2022/src/lmp_mpi'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+#laptop path 
+#Path_2_generic='/Users/lukedebono/documents/LAMMPS_projects_mac_book/OneDrive_1_24-02-2023/Shell_scripts_for_MYRIAD'
+#imac path 
+Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
+wd_path='/home/ucahlrl/Scratch/output/'
+extra_code=''
+data_transfer_instructions=''
+num_task_req=''
+i_=0
+j_=3
+# for VACf run 
+wall_time='12:00:00'
+
+ram_requirement='16G'
+tempdir_req='20G'
+dump_freq=10000
+thermo_freq=10000
+no_timesteps=2000000
+equilibration_timesteps=1000
+VP_ave_freq=10000
+realisation_index_=[1,2,3]
+swap_rate=np.array([15,150,600])
+swap_number=np.array([1])
+max_cores=4
+num_proc=4
+np_req=str(num_proc)
+phi_ = str(phi)
+if (int(np_req)) > max_cores:
+      print("Too many cores requested")
+      breakpoint()
+else:
+      print("Core request satisfactory, producing simulation submission script ")
+
+
+
+def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name):
+    
+    os.chdir(Path_2_shell_scirpts)
+    META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+    specific_email = 'luke.debono.21@ucl.ac.uk'
+    simulation_batch_folder= 'simulation_batch_scripts_'+fluid_name+'_phi_'+str(phi)+'_validation_fluid_visc_'+str(nu_bar)+'_temp_'+str(simulation_temp_bar)+'_box_size_'+str(box_size_bar)+'_swap_rate_range_'+str(swap_rate[0])+'_'+str(swap_rate[swap_rate.size-1])+'_no_timesteps_'+str(no_timesteps)+'_tstep_'+str(md_timestep)+'_'+META_DATA
+    os.mkdir(simulation_batch_folder)
+    sim_batchcode=str(np.random.randint(0, 1000000))
+    # test to check consistency of cores request 
+    
+    
+    for j in range(i_,j_): #or now just use one realisation 
+    
+        for k in range(0,swap_number.size):
+                param_set_code=str(np.random.randint(0, 1000000))
+                #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_''_swap_number_'+str(swap_number[k])+'_test_run_'
+                # simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_'+str(lengthscale)+'_val_param_sweep_solution_'+str(solution_choice_tuple)+'_realisation_'+str(j)+'_swap_rate_range_'+str(swap_rate[0])+'_'+str(swap_rate[swap_rate.size-1])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                # run_code=''   
+                for m in range(0,swap_rate.size):#range(0,1):  
+                    #or l in range(0,array_entry.size):
+                        #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                        simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_lenscl_'+str(lengthscale)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                        run_code=''
+                        no_SRD=str(int(srd_count)) 
+                        #print(no_SRD)
+                        mass_SRD =str(fluid_particle_mass_bar)
+                        box_size = str(box_size_bar)
+                        timestep_input= str(md_timestep)
+                        chunk = 20 # number of chunks to use for VP averaging
+                        SRD_MD_ratio=str(int(collision_ratio))
+                        lamda= str(collision_time_negative_bar )
+                        grid_size = str(collision_cell_size_bar)
+                        dump_freq=str(dump_freq) # if you change the timestep rememebr to chaneg this 
+                        thermo_freq = str(thermo_freq) # if you change the timestep rememebr to chaneg this 
+                        no_timesteps = str(no_timesteps)
+                        temp_=str(simulation_temp_bar)
+                        rand_int =str(np.random.randint(0, 1000000))
+                        rand_int_1 =str( np.random.randint(0, 1000000))
+                        rand_int_2 =str(np.random.randint(0, 1000000))
+
+
+                        run_code_individual ='mpirun -np '+str(num_proc)+'  '+abs_path_2_lammps_exec+' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+' -var swap_rate '+str(swap_rate[m])+' -var swap_number '+str(swap_number[k])+' -var VP_ave_freq '+str(VP_ave_freq)+' -var equilibration_timesteps '+str(equilibration_timesteps)+' -var chunk '+str(chunk)+' -var grid_size '+str(grid_size)+' -var realisation_index '+str(realisation_index_[j])+' -var temp_ '+temp_+' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+' -var rand_int_2 '+rand_int_2+' -var no_SRD '+no_SRD+' -var mass_SRD '+mass_SRD+' -var box_size '+box_size+' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+str(collision_ratio)+' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+no_timesteps+'  -in '+abs_path_2_lammps_script+' & \n'  #>> '+prod_run_file_name+' & \n'
+                        run_code=run_code +run_code_individual
+
+                        run_code = run_code[:-3]
+
+                        py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
+
+
+sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+
+
+
+
+# %%
