@@ -29,179 +29,34 @@ from datetime import datetime
 from sim_file_producer_SRD import *
 
 #%% H20 parameters
-
-collision_cell_size_bar= 1
-fluid_particle_mass_bar= 1 
-simulation_temp_bar=1
-fluid_particle_number_density= 5 
 fluid_name='H20'
 real_fluid_density = 1000 # H20 
 T_K=300 # fluid temp at density listed
-k_b=1.38e-23
-energy_scale= T_K * k_b / simulation_temp_bar
-r_particle=2.5e-5
-n_particle= 2
-lengthscale= 0.25 * r_particle
-mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
-time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
-nu_bar=0.52
-# need to change this if you change fluid particle number density 
-collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-md_timestep=0.01
-collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
-phi=0.0577777778#np.linspace(0.04,0.06,10)
 
-box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
-print(box_size_bar/collision_cell_size_bar)
-box_size_bar=np.round(box_size_bar)
-srd_count= (box_size_bar**3 )* fluid_particle_number_density
-
-nu= nu_bar * (lengthscale**2)/time_scale
-
-print("time_scale",time_scale)
-print("lengthscale",lengthscale)
-print("mass scale",mass_scale)
-print("energy scale",energy_scale)
-#print(collision_time_positive_bar)
-#print(collision_time_negative_bar)
-print("collision ratio",collision_ratio)
-print("box size",box_size_bar)
-print("srd count",srd_count)
-
-#%% Argon parameters
-
-collision_cell_size_bar= 1
-fluid_particle_mass_bar= 1 
-simulation_temp_bar=1
-fluid_particle_number_density= 5 
+#%% Argon 
 fluid_name='Ar'
 real_fluid_density = 1426.9 # H20 
 T_K=86.5 # fluid temp at density listed
-k_b=1.38e-23
-energy_scale= T_K * k_b / simulation_temp_bar
-r_particle=2.5e-5
-n_particle= 2
-lengthscale= 0.25 * r_particle
-mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
-time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
-nu_bar=0.52
-# need to change this if you change fluid particle number density 
-collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-md_timestep=0.01
-print(collision_ratio)
-collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
-phi=0.0577777778#np.linspace(0.04,0.06,10)
-
-box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
-print(box_size_bar/collision_cell_size_bar)
-box_size_bar=np.round(box_size_bar)
-srd_count= (box_size_bar**3 )* fluid_particle_number_density
-
-nu= nu_bar * (lengthscale**2)/time_scale
-
-print("time_scale",time_scale)
-print("lengthscale",lengthscale)
-print("mass scale",mass_scale)
-print("energy scale",energy_scale)
-#print(collision_time_positive_bar)
-#print(collision_time_negative_bar)
-print("collision ratio",collision_ratio)
-print("box size",box_size_bar)
-print("srd count",srd_count)
-
-#%% Nitrogen parameters
-
-collision_cell_size_bar= 1
-fluid_particle_mass_bar= 1 
-simulation_temp_bar=1
-fluid_particle_number_density= 5 
+#%% Nitrogen 
 fluid_name='N2'
 real_fluid_density =  847 # H20 
 T_K=72.2  # fluid temp at density listed
-k_b=1.38e-23
-energy_scale= T_K * k_b / simulation_temp_bar
-r_particle=2.5e-5
-n_particle= 2
-lengthscale= 0.25 * r_particle
-mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
-time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
-nu_bar=0.52
-# need to change this if you change fluid particle number density 
-collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-md_timestep=0.01
-collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
-phi=0.0577777778#np.linspace(0.04,0.06,10)
-
-box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
-print(box_size_bar/collision_cell_size_bar)
-box_size_bar=np.round(box_size_bar)
-srd_count= (box_size_bar**3 )* fluid_particle_number_density
-
-nu= nu_bar * (lengthscale**2)/time_scale
-
-print("time_scale",time_scale)
-print("lengthscale",lengthscale)
-print("mass scale",mass_scale)
-print("energy scale",energy_scale)
-#print(collision_time_positive_bar)
-#print(collision_time_negative_bar)
-print("collision ratio",collision_ratio)
-print("box size",box_size_bar)
-print("srd count",srd_count)
-#%% Hexane parameters
-
-collision_cell_size_bar= 1
-fluid_particle_mass_bar= 1 
-simulation_temp_bar=1
-fluid_particle_number_density= 5 
+#%% hexane 
 fluid_name='C6H14'
 real_fluid_density = 700# H20 
 T_K=311 # fluid temp at density listed
+#%% cyclohexane 
+fluid_name='C6H12'
+real_fluid_density = 764.95 # H20 
+T_K=307.65 # fluid temp at density listed
+
+
+#%% input calc 
 k_b=1.38e-23
-energy_scale= T_K * k_b / simulation_temp_bar
-r_particle=2.5e-5
-n_particle= 2
-lengthscale= 0.25 * r_particle
-mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
-time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
-nu_bar=0.52
-# need to change this if you change fluid particle number density 
-collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-md_timestep=0.01
-collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
-phi=0.0577777778#np.linspace(0.04,0.06,10)
-
-box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
-print(box_size_bar/collision_cell_size_bar)
-box_size_bar=np.round(box_size_bar)
-srd_count= (box_size_bar**3 )* fluid_particle_number_density
-
-nu= nu_bar * (lengthscale**2)/time_scale
-
-print("time_scale",time_scale)
-print("lengthscale",lengthscale)
-print("mass scale",mass_scale)
-print("energy scale",energy_scale)
-#print(collision_time_positive_bar)
-#print(collision_time_negative_bar)
-print("collision ratio",collision_ratio)
-print("box size",box_size_bar)
-print("srd count",srd_count)
-
-#%% cycloHexane parameters
-
 collision_cell_size_bar= 1
 fluid_particle_mass_bar= 1 
 simulation_temp_bar=1
 fluid_particle_number_density= 5 
-fluid_name='C6H12'
-real_fluid_density = 764.95 # H20 
-T_K=307.65 # fluid temp at density listed
-k_b=1.38e-23
 energy_scale= T_K * k_b / simulation_temp_bar
 r_particle=2.5e-5
 n_particle= 2
@@ -212,12 +67,68 @@ nu_bar=0.52
 # need to change this if you change fluid particle number density 
 collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
 collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
-md_timestep=0.01
+md_timestep=0.01 # just  change this to make the collision ratio integer
+collision_ratio_before_round= collision_time_negative_bar/md_timestep
+print("collision_ratio_before_round",collision_ratio_before_round)
 collision_ratio=int(np.round(collision_time_negative_bar/md_timestep))
-phi=0.0577777778#np.linspace(0.04,0.06,10)
+i=2
+# values all chosen to yield approximately integer box size to collision cell ratio 
+#phi=[0.0577777778,,0.00588,,0.0005873]#np.linspace(0.04,0.06,10)
 
-box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi)
-print(box_size_bar/collision_cell_size_bar)
+#%% calcuating alpha 
+phi=np.array([0.05,0.01,0.005,0.001,0.0005])
+fina_size=300
+box_size_bar=np.linspace(1,fina_size,fina_size)
+alpha= np.linspace(0.2,0.4,5000)
+
+def func_phi(a,n_particle,L,phi):
+
+  return  (4/3)*(np.pi*n_particle/(phi*((L*a)**3))) - 1
+
+a=np.array([0.25,0.3,0.35]) # making this bigger reduces the total number of boxes and the particle count
+
+
+res=np.zeros((phi.size,fina_size,a.size))
+
+for k in range(0,phi.size):
+    for i in range(0,a.size):
+        for j in range(0,fina_size):
+            
+            res[k,j,i]=func_phi(a[i],n_particle,box_size_bar[j],phi[k])
+         
+         #res= res+ (scipy.optimize.minimize(func_phi,0.25,method='Powell',args=(n_particle,L,phi,)),)#,bounds=(0.2,0.4)),
+
+
+sign_change_array=np.zeros((phi.size,2,a.size))
+
+for k in range(0,phi.size):
+    for i in range(0,a.size):
+        for j in range(0,fina_size-1):
+
+    # checking for successive opposite index
+            if  res[k,j,i] > 0 and res[k,j+1,i] < 0 or res[k,j,i] < 0 and res[k,j+1,i] > 0:
+                sign_change_array[k,0,i]= j
+                sign_change_array[k,1,i]= j+1
+            else:
+                 print()
+                 continue
+# take differenc between the values 
+final_sign_change_array=np.zeros((phi.size,1,a.size))
+for k in range(0,phi.size):
+    for i in range(0,a.size):
+     if  np.abs(res[k,int(sign_change_array[k,0,i]),i]) < np.abs(res[k,int(sign_change_array[k,1,i]),i]):
+        
+        final_sign_change_array[k,0,i]=int(sign_change_array[k,0,i])
+     else:
+        final_sign_change_array[k,0,i]=int(sign_change_array[k,1,i])
+    
+        
+ 
+
+#%%
+box_size_bar= np.cbrt((256*np.pi*n_particle/3)/phi[i])
+print("box size to collison cell size ratio",box_size_bar/collision_cell_size_bar)
+
 box_size_bar=np.round(box_size_bar)
 srd_count= (box_size_bar**3 )* fluid_particle_number_density
 
@@ -232,6 +143,11 @@ print("energy scale",energy_scale)
 print("collision ratio",collision_ratio)
 print("box size",box_size_bar)
 print("srd count",srd_count)
+
+
+
+
+
  
 #%% MYRIAD paths sim file production 
 #laptop path 
