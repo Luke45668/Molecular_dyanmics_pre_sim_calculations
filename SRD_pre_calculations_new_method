@@ -121,6 +121,7 @@ lengthscale= k_for_each_phi * r_particle
 mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
 time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
 nu_bar=0.52
+#
 # need to change this if you change fluid particle number density 
 collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
 collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
@@ -156,6 +157,8 @@ print("estimated equilibration steps", estimated_equilibration_steps)
 
 
 
+
+
  
 #%% MYRIAD paths sim file production 
 #laptop path 
@@ -182,7 +185,7 @@ realisation_index_=[1,2,3]
 i_=0
 j_=3
 fluid_name='genericSRD'
-wall_time=['02:00:00','02:00:00','05:00:00','06:00:00','08:00:00','12:00:00','36:00:00','48:00:00']
+wall_time=['02:00:00','02:00:00','10:00:00','12:00:00','08:00:00','12:00:00','36:00:00','48:00:00']
 ram_requirement=['8G','8G','12G','12G','16G','16G','20G','20G']
 num_proc=[4,4,4,4,8,8,8,8] 
 swap_rate=np.array([15,30,60,120,240,480,600])
@@ -240,7 +243,7 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                             py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
 
 
-for i in range(phi.size):
+for i in range(3,4):
     np_req=str(num_proc[i])
 
     sim_file_prod_neg_soln_individual_new(phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
@@ -320,3 +323,23 @@ for i in range(phi.size):
 
     sim_file_prod_neg_soln_individual_new(phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 
+#%% plotting delta t vs nu bar 
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "Helvetica"
+})
+plt.rcParams.update({'font.size': 25})
+nu_bar=np.linspace(np.sqrt(7/90),0.6,50)
+#
+# need to change this if you change fluid particle number density 
+collision_time_negative_bar= (0.5 - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+collision_time_positive_bar= (0.5 + np.sqrt((nu_bar**2)-(7/90)))/(7/8)
+plt.plot(nu_bar,collision_time_negative_bar)
+plt.plot(nu_bar,collision_time_positive_bar)
+plt.xlabel("$\\bar{\\nu}$")
+plt.ylabel("$\Delta \\bar{t}$",rotation=0)
+plt.savefig("scaled_timstep_vs_scaled_nu_M_5_.pdf",dpi=500, bbox_inches='tight')
+plt.show()
+
+
+# %%
