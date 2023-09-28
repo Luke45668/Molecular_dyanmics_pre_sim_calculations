@@ -50,6 +50,7 @@ fluid_name='C6H12'
 real_fluid_density = 764.95 # H20 
 T_K=307.65 # fluid temp at density listed
 #%% calcuating lengthscale coefficient 
+n_particle=2
 phi=np.array([0.05,0.03,0.01,0.008,0.005,0.003,0.001,0.0008])
 fina_size=300 # need to increase this if you want bigger boxes
 box_size_bar=np.linspace(1,fina_size,fina_size)
@@ -116,7 +117,6 @@ simulation_temp_bar=1
 fluid_particle_number_density= 5 
 energy_scale= T_K * k_b / simulation_temp_bar
 r_particle=2.5e-5
-n_particle= 2
 lengthscale= k_for_each_phi * r_particle
 mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
 time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
@@ -175,8 +175,10 @@ wd_path='/home/ucahlrl/Scratch/output/'
 extra_code=''
 data_transfer_instructions=''
 num_task_req=''
+
 fluid_name='genericSRD'
 tempdir_req='20G'
+#%% production runs 
 dump_freq=10000
 thermo_freq=10000
 equilibration_timesteps=1000
@@ -185,7 +187,7 @@ realisation_index_=[1,2,3]
 i_=0
 j_=3
 fluid_name='genericSRD'
-wall_time=['02:00:00','02:00:00','10:00:00','12:00:00','08:00:00','12:00:00','36:00:00','48:00:00']
+wall_time=['02:00:00','02:00:00','10:00:00','12:00:00','08:00:00','24:00:00','36:00:00','48:00:00']
 ram_requirement=['8G','8G','12G','12G','16G','16G','20G','20G']
 num_proc=[4,4,4,4,8,8,8,8] 
 swap_rate=np.array([15,30,60,120,240,480,600])
@@ -243,7 +245,7 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                             py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
 
 
-for i in range(3,4):
+for i in range(5,6):
     np_req=str(num_proc[i])
 
     sim_file_prod_neg_soln_individual_new(phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
