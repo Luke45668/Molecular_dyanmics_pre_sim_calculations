@@ -51,7 +51,7 @@ real_fluid_density = 764.95 # H20
 T_K=307.65 # fluid temp at density listed
 #%% calcuating lengthscale coefficient 
 n_particle=2
-phi=np.array([0.05,0.03,0.01,0.008,0.005,0.003,0.002,0.0015,0.001,0.0008])
+phi=np.array([0.05,0.03,0.01,0.008,0.005,0.003,0.002,0.0015,0.0013,0.0012])
 fina_size=300 # need to increase this if you want bigger boxes
 box_size_bar=np.linspace(1,fina_size,fina_size)
 
@@ -140,6 +140,14 @@ equilibration_timesteps_from_test=10000
 estimated_equilibration_steps=(srd_count/46305) * equilibration_timesteps_from_test
 
 nu= nu_bar * (lengthscale**2)/time_scale
+Sc_est=62 # from pre calc 
+diffusivity = nu_bar/Sc_est
+characteristic_flow_vel=0.5
+c_s = np.sqrt((5/3)* (energy_scale/(lengthscale* time_scale**2)))
+acoustic_timescale= box_size_bar/c_s
+viscous_timescale= (box_size_bar**2)/nu_bar
+diffusion_timescale= (box_size_bar**2) / diffusivity # no embedded particles so doesnt matter
+stokes_timescale= box_size_bar/characteristic_flow_vel
 
 print("time_scale",time_scale)
 print("lengthscale",lengthscale)
@@ -167,6 +175,7 @@ print("estimated equilibration steps", estimated_equilibration_steps)
 Path_2_shell_scirpts='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps-23Jun2022/src/lmp_mpi'
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/no_wall_pure_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
+                                                             #no_wall_pure_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file
 #laptop path 
 #Path_2_generic='/Users/lukedebono/documents/LAMMPS_projects_mac_book/OneDrive_1_24-02-2023/Shell_scripts_for_MYRIAD'
 #imac path 
@@ -178,6 +187,86 @@ num_task_req=''
 
 fluid_name='genericSRD'
 tempdir_req='20G'
+#%% selecting the correct swap velocity in Muller-Plathe 
+dump_freq=10000
+thermo_freq=10000
+equilibration_timesteps=1000
+VP_ave_freq=10000
+realisation_index_=[1,2,3]
+i_=0
+j_=3
+fluid_name='genericSRD'
+wall_time=['02:00:00','02:00:00','10:00:00','12:00:00','12:00:00','48:00:00','48:00:00','48:00:00','48:00:00','48:00:00']
+ram_requirement=['8G','8G','12G','12G','16G','16G','20G','20G','20G','20G']
+num_proc=[4,4,4,4,8,8,8,8,8,8] 
+swap_rate=np.array([15]) # choose highest swap rate , so all are covered. 
+#vel_target=np.array([1,0.1,0.001,0.0001,0.00001,0.000001]) # did not work 
+vel_target=np.array(['INF',10,1,0.8,0.6,0.4,0.2,0.1,0.01,0.001]) 
+
+swap_number=np.array([1])
+fluid_name='genericSRD'
+
+no_timesteps=2000000
+
+def sim_file_prod_neg_soln_individual_new(vel_target,phi,lengthscale,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name):
+        
+        os.chdir(Path_2_shell_scirpts)
+        META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+        specific_email = 'luke.debono.21@ucl.ac.uk'
+        simulation_batch_folder= 'simulation_batch_scripts_'+fluid_name+'_phi_'+str(phi)+'_validation_fluid_visc_'+str(nu_bar)+'_temp_'+str(simulation_temp_bar)+'_box_size_'+str(box_size_bar)+'_swap_rate_range_'+str(swap_rate[0])+'_'+str(swap_rate[swap_rate.size-1])+'_no_timesteps_'+str(no_timesteps)+'_tstep_'+str(md_timestep)+'_'+META_DATA
+        os.mkdir(simulation_batch_folder)
+        sim_batchcode=str(np.random.randint(0, 1000000))
+        # test to check consistency of cores request 
+        
+        
+        for j in range(i_,j_): #or now just use one realisation 
+        
+            for k in range(0,swap_number.size):
+                    param_set_code=str(np.random.randint(0, 1000000))
+                    #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_''_swap_number_'+str(swap_number[k])+'_test_run_'
+                    # simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_'+str(lengthscale)+'_val_param_sweep_solution_'+str(solution_choice_tuple)+'_realisation_'+str(j)+'_swap_rate_range_'+str(swap_rate[0])+'_'+str(swap_rate[swap_rate.size-1])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                    # run_code=''   
+                    for m in range(0,vel_target.size):#range(0,1):  
+                        #or l in range(0,array_entry.size):
+                            #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                            simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_box_size_'+str(box_size_bar)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[0])+'_vel_target_'+str(vel_target[m])+'_test_run_'
+                            run_code=''
+                            no_SRD=str(int(srd_count)) 
+                            #print(no_SRD)
+                            mass_SRD =str(fluid_particle_mass_bar)
+                            box_size = str(box_size_bar)
+                            timestep_input= str(md_timestep)
+                            chunk = 20 # number of chunks to use for VP averaging
+                            SRD_MD_ratio=str(int(collision_ratio))
+                            lamda= str(collision_time_negative_bar )
+                            grid_size = str(collision_cell_size_bar)
+                            dump_freq=str(dump_freq) # if you change the timestep rememebr to chaneg this 
+                            thermo_freq = str(thermo_freq) # if you change the timestep rememebr to chaneg this 
+                            no_timesteps = str(no_timesteps)
+                            temp_=str(simulation_temp_bar)
+                            rand_int =str(np.random.randint(0, 1000000))
+                            rand_int_1 =str( np.random.randint(0, 1000000))
+                            rand_int_2 =str(np.random.randint(0, 1000000))
+                            velocity_target= str(vel_target[m])
+
+
+                            run_code_individual ='mpirun -np '+str(num_proc)+'  '+abs_path_2_lammps_exec+' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+' -var swap_rate '+str(swap_rate[0])+' -var swap_number '+str(swap_number[k])+' -var VP_ave_freq '+str(VP_ave_freq)+' -var equilibration_timesteps '+str(equilibration_timesteps)+' -var chunk '+str(chunk)+' -var grid_size '+str(grid_size)+' -var realisation_index '+str(realisation_index_[j])+' -var temp_ '+temp_+' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+' -var rand_int_2 '+rand_int_2+' -var no_SRD '+no_SRD+' -var mass_SRD '+mass_SRD+' -var box_size '+box_size+' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+no_timesteps+' -var vel_target '+velocity_target+'  -in '+abs_path_2_lammps_script+' & \n'  #>> '+prod_run_file_name+' & \n'
+                            run_code=run_code +run_code_individual
+
+                            run_code = run_code[:-3]
+
+                            py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
+
+
+for i in range(0,len(phi)):
+    np_req=str(num_proc[i])
+
+    sim_file_prod_neg_soln_individual_new(vel_target,phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+
+
+
+
+
 #%% production runs 
 dump_freq=10000
 thermo_freq=10000
@@ -190,13 +279,14 @@ fluid_name='genericSRD'
 wall_time=['02:00:00','02:00:00','10:00:00','12:00:00','08:00:00','48:00:00','48:00:00','48:00:00','48:00:00','48:00:00']
 ram_requirement=['8G','8G','12G','12G','16G','16G','20G','20G','20G','20G']
 num_proc=[4,4,4,4,8,8,8,8,8,8] 
-swap_rate=np.array([15,30,60,120,240,480,600])
+swap_rate=np.array([15,30,60,90,120,150,180,360])
+vel_target=np.array([0.8]) 
 swap_number=np.array([1])
-fluid_name='genericSRD'
+fluid_name='productionSRD'
 
-no_timesteps=3000000
+no_timesteps=2000000
 
-def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name):
+def sim_file_prod_neg_soln_individual_new(vel_target,phi,lengthscale,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name):
         
         os.chdir(Path_2_shell_scirpts)
         META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
@@ -217,7 +307,7 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                     for m in range(0,swap_rate.size):#range(0,1):  
                         #or l in range(0,array_entry.size):
                             #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
-                            simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                            simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_box_size_'+str(box_size_bar)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_vel_target_'+str(vel_target[0])+'_test_run_'
                             run_code=''
                             no_SRD=str(int(srd_count)) 
                             #print(no_SRD)
@@ -235,9 +325,10 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                             rand_int =str(np.random.randint(0, 1000000))
                             rand_int_1 =str( np.random.randint(0, 1000000))
                             rand_int_2 =str(np.random.randint(0, 1000000))
+                            velocity_target= str(vel_target[0])
 
 
-                            run_code_individual ='mpirun -np '+str(num_proc)+'  '+abs_path_2_lammps_exec+' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+' -var swap_rate '+str(swap_rate[m])+' -var swap_number '+str(swap_number[k])+' -var VP_ave_freq '+str(VP_ave_freq)+' -var equilibration_timesteps '+str(equilibration_timesteps)+' -var chunk '+str(chunk)+' -var grid_size '+str(grid_size)+' -var realisation_index '+str(realisation_index_[j])+' -var temp_ '+temp_+' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+' -var rand_int_2 '+rand_int_2+' -var no_SRD '+no_SRD+' -var mass_SRD '+mass_SRD+' -var box_size '+box_size+' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+no_timesteps+'  -in '+abs_path_2_lammps_script+' & \n'  #>> '+prod_run_file_name+' & \n'
+                            run_code_individual ='mpirun -np '+str(num_proc)+'  '+abs_path_2_lammps_exec+' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+' -var swap_rate '+str(swap_rate[0])+' -var swap_number '+str(swap_number[k])+' -var VP_ave_freq '+str(VP_ave_freq)+' -var equilibration_timesteps '+str(equilibration_timesteps)+' -var chunk '+str(chunk)+' -var grid_size '+str(grid_size)+' -var realisation_index '+str(realisation_index_[j])+' -var temp_ '+temp_+' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+' -var rand_int_2 '+rand_int_2+' -var no_SRD '+no_SRD+' -var mass_SRD '+mass_SRD+' -var box_size '+box_size+' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+no_timesteps+' -var vel_target '+velocity_target+'  -in '+abs_path_2_lammps_script+' & \n'  #>> '+prod_run_file_name+' & \n'
                             run_code=run_code +run_code_individual
 
                             run_code = run_code[:-3]
@@ -245,15 +336,16 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                             py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
 
 
-for i in range(6,8):
+for i in range(0,len(phi)):
     np_req=str(num_proc[i])
 
-    sim_file_prod_neg_soln_individual_new(phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
+    sim_file_prod_neg_soln_individual_new(vel_target,phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
 
 
 
 
 # %% making VACF files 
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/VACF_output_pure_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 dump_freq=10000
 thermo_freq=1
 equilibration_timesteps=1
@@ -262,10 +354,10 @@ realisation_index_=[1,2,3]
 i_=0
 j_=3
 
-wall_time=['01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00','01:00:00']
+wall_time=['02:00:00','02:00:00','02:00:00','02:00:00','02:00:00','02:00:00','02:00:00','02:00:00','02:00:00','02:00:00']
 ram_requirement=['8G','8G','12G','12G','16G','16G','20G','20G','20G','20G']
 num_proc=[4,4,4,4,8,8,8,8,8,8] 
-swap_rate=np.array([1200]) # basically dont want muller plathe to run 
+swap_rate=np.array([10000]) # dont want muller plathe to run 
 swap_number=np.array([1])
 fluid_name='actualVACF'
 
@@ -292,7 +384,7 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                     for m in range(0,swap_rate.size):#range(0,1):  
                         #or l in range(0,array_entry.size):
                             #simulation_run_name=fluid_name+'_val_param_sweep_solution_'+str(z)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
-                            simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
+                            simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_box_size_'+str(box_size_bar)+'_realisation_'+str(j)+'_swap_rate_'+str(swap_rate[m])+'_swap_number_'+str(swap_number[k])+'_test_run_'
                             run_code=''
                             no_SRD=str(int(srd_count)) 
                             #print(no_SRD)
@@ -320,7 +412,7 @@ def sim_file_prod_neg_soln_individual_new(phi,lengthscale,data_transfer_instruct
                             py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,np_req,wd_path,extra_code,run_code,data_transfer_instructions)
 
 
-for i in range(phi.size):
+for i in range(8):
     np_req=str(num_proc[i])
 
     sim_file_prod_neg_soln_individual_new(phi[i],lengthscale[i],data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time[i],ram_requirement[i],realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc[i],no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count[i],swap_number,i_,j_,swap_rate,box_size_bar[i],simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name)
