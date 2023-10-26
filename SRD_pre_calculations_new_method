@@ -122,6 +122,8 @@ lengthscale= k_for_each_phi * r_particle
 mass_scale= real_fluid_density * (lengthscale**3) /  fluid_particle_number_density
 time_scale= np.sqrt((mass_scale*(lengthscale**2))/(T_K*k_b))
 nu_bar=0.52
+#nu_bar=0.75
+
 #
 # need to change this if you change fluid particle number density 
 collision_time_negative_bar= (nu_bar - np.sqrt((nu_bar**2)-(7/90)))/(7/8)
@@ -351,7 +353,7 @@ for i in range(0,len(phi)):
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/VACF_output_pure_SRD_sim_var_inputs_td_var_no_tstat_no_rescale_mom_output.file'
 dump_freq=10000
 thermo_freq=10
-equilibration_timesteps=1
+equilibration_timesteps=10000
 VP_ave_freq=10000
 realisation_index_=[1,2,3]
 i_=0
