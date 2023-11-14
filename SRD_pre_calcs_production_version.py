@@ -58,7 +58,7 @@ k_b= 1.380649e-23 #boltzmann in J K^-1
 #for particlesize = 25 microm 
 # determine side length of simulation box
 r_particle =25e-6
-i=0# this index sets the domain size 
+i=1# this index sets the domain size 
 phi=[0.005,0.0005,0.00005]
 
 # for particle size = 10 micro m 
