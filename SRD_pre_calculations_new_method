@@ -330,7 +330,7 @@ bead_mass= 5
 k=np.array([1,10,100,1000]) # spring stiffness
 box_size_bar=23
 Number_of_bead_sping_molecules=np.array([2,4,8,16,32]) # to find the intrinsic viscosity 
-
+srd_count_minus=s
 mass_concentration_nd= bead_mass*2 *Number_of_bead_sping_molecules / (box_size_bar**3)  #mu/ell^3
 weight_percentage=  bead_mass*2 *Number_of_bead_sping_molecules / (srd_count[4]+(bead_mass*2 *Number_of_bead_sping_molecules))
 
@@ -809,18 +809,19 @@ i_=0
 j_=3
 wall_time=['24:00:00']
 ram_requirement=['20G']
-num_proc=[8,16] 
+num_proc=[8] 
 swap_rate=np.array([15,30,60,90,120,150])
-#swap_rate=np.array([15])# for speed test 
+swap_rate=np.array([15])# for speed test 
 vel_target=np.array([0.8]) 
 swap_number=np.array([1])
 
-dumbell_stiffness=np.array([50,100,1000,10000]) # spring stiffness
+dumbell_stiffness=np.array([75,100,200,400,800,1600]) # spring stiffness test 
 Number_of_bead_sping_molecules=np.array([2,4,8,16,32,64])
+Number_of_bead_sping_molecules=np.array([32])# spring stiffness test 
 srd_count=60835 # for box size 23
+box_size_bar=23
 
-
-no_timesteps=2000000
+no_timesteps=7000000
 #no_timesteps=20000 # for run test 
 
 def sim_file_prod_polymers_soln_individual_new(vel_target,Number_of_bead_sping_molecules,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,equilibration_timesteps,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,num_proc,no_timesteps,thermo_freq,dump_freq,collision_cell_size_bar,collision_time_negative_bar,md_timestep,fluid_particle_mass_bar,srd_count,swap_number,i_,j_,swap_rate,box_size_bar,simulation_temp_bar,nu_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name):
