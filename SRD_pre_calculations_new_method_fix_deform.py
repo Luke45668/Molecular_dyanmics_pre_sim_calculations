@@ -117,7 +117,7 @@ k_b=1.38e-23
 collision_cell_size_bar= 1
 fluid_particle_mass_bar= 1 
 simulation_temp_bar=1
-fluid_particle_number_density= 10 #5
+fluid_particle_number_density= 5 #10
 energy_scale= T_K * k_b / simulation_temp_bar
 r_particle=2.5e-5
 lengthscale= k_for_each_phi * r_particle
@@ -404,7 +404,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.pure_srd_nonequ
 
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 data_transfer_instructions=''
-extra_code=''
+extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n module load hdf/5-1.12.3-impi/intel-2022'
 wd_path='/home/ucahlrl/Scratch/output/'
 num_task_req=''
 tempdir_req=''
@@ -439,9 +439,9 @@ np_req=str(8)
 phi_= str(phi[box_size_index])
 
 
-var_choice_1=erate_
-var_choice_2=no_timestep_
 
+var_choice_1=no_timestep_
+var_choice_2=erate_
 
 
 def sim_file_prod_fix_deform_pure_individual_MYRIAD(nu_bar,erate_,var_choice_1,var_choice_2,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,no_timestep_,thermo_freq,md_timestep,i_,j_,box_size_bar,box_size_index,Path_2_shell_scirpts,Path_2_generic,fluid_name,SRD_MD_ratio_,dump_freq_):
@@ -459,7 +459,7 @@ def sim_file_prod_fix_deform_pure_individual_MYRIAD(nu_bar,erate_,var_choice_1,v
         for k in range(0,var_choice_1.size):       
                 for m in range(0,var_choice_2.size):#range(0,1):  
                         param_set_code=str(np.random.randint(0, 1000000))
-                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_1[k])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[m])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
+                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_2[m])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[k])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
                         run_code=''
                         no_SRD=str(int(srd_count[box_size_index])) 
                         #print(no_SRD)
@@ -473,7 +473,7 @@ def sim_file_prod_fix_deform_pure_individual_MYRIAD(nu_bar,erate_,var_choice_1,v
                         temp_=str(1)
                         grid_size=str(1)
                         mass_SRD=str(1)
-                        no_timesteps = str(no_timestep_[m])
+                        no_timesteps = str(no_timestep_[k])
                         rand_int =str(np.random.randint(0, 1000000))
                         rand_int_1 =str( np.random.randint(0, 1000000))
                         rand_int_2 =str(np.random.randint(0, 1000000))
