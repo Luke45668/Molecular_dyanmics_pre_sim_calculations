@@ -12,7 +12,7 @@ This script will does all the pre calcs for the SRD fluid mappings and then prod
 #from msilib import MSIMODIFY_INSERT_TEMPORARY
 import os
 import numpy as np
-
+import sigfig 
 import matplotlib.pyplot as plt
 import regex as re
 import pandas as pd
@@ -357,7 +357,7 @@ def sim_file_prod_fix_deform_pure_individual_kathleen(nu_bar,erate_,var_choice_1
         for k in range(0,var_choice_1.size):       
                 for m in range(0,var_choice_2.size):#range(0,1):  
                         param_set_code=str(np.random.randint(0, 1000000))
-                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_1[k])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[m])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
+                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_1[k])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[k])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
                         run_code=''
                         no_SRD=str(int(srd_count[box_size_index])) 
                         #print(no_SRD)
@@ -371,12 +371,12 @@ def sim_file_prod_fix_deform_pure_individual_kathleen(nu_bar,erate_,var_choice_1
                         temp_=str(1)
                         grid_size=str(1)
                         mass_SRD=str(1)
-                        no_timesteps = str(no_timestep_[m])
+                        no_timesteps = str(no_timestep_[k])
                         rand_int =str(np.random.randint(0, 1000000))
                         rand_int_1 =str( np.random.randint(0, 1000000))
                         rand_int_2 =str(np.random.randint(0, 1000000))
                         num_proc=str(np_req)
-                        erate=str(erate_[m])
+                        erate=str(erate_[k])
                         
 
 
@@ -413,27 +413,37 @@ tempdir_req=''
 # calculating possible SRD_MD ratios and MD timesteps 
 SRD_MD_ratio_ = 10
 md_timestep=collision_time_negative_bar/SRD_MD_ratio_
+erate_= np.array([0.0005,0.001,0.002,0.005,0.01])
+
+# estimating number of steps  required
+strain=2
+delta_t_md=md_timestep
+strain_rate= erate_
+number_steps_needed= np.ceil(strain/(strain_rate*delta_t_md))
+dump_freq=10
+#rho=10 
 #no_timestep_=(10000000*(SRD_MD_ratio_/SRD_MD_ratio_[0])).astype('int')
-no_timestep_=np.array([100000])
+no_timestep_=np.round(number_steps_needed)
+no_timestep_=np.array([800000,400000,200000,160000,160000]) # approx 3 units of strain each 
 print(md_timestep)
 print(collision_time_negative_bar)
 dump_freq_=10
 thermo_freq=1000
-erate_=np.array([0.002,0.001,0.0005,0.0001])
+
 VP_ave_freq=10000
 i_=0
 j_=3
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 
-box_size_index=7
+box_size_index=10
 fluid_name='M_'+str(fluid_particle_number_density)+'_L_'+str(box_size_bar[box_size_index])+'_'
 
 
 
 realisation_index_=[1,2,3]
 
-tempdir_req='100G'
-ram_requirement='20G'
+tempdir_req='1G'
+ram_requirement='5G'
 wall_time='4:00:00'
 np_req=str(8)
 phi_= str(phi[box_size_index])
@@ -457,9 +467,11 @@ def sim_file_prod_fix_deform_pure_individual_MYRIAD(nu_bar,erate_,var_choice_1,v
     
     for j in range(i_,j_): #or now just use one realisation 
         for k in range(0,var_choice_1.size):       
-                for m in range(0,var_choice_2.size):#range(0,1):  
+        #for k in range(3,4): # producing one shear rate at a time 
+                #for m in range(0,var_choice_2.size):#range(0,1):  
+         #       for m in range(3,4):
                         param_set_code=str(np.random.randint(0, 1000000))
-                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_2[m])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[k])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
+                        simulation_run_name=fluid_name+'_pure_fix_deform_mpc_visc_'+str(nu_bar)+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_erate_'+str(var_choice_2[k])+'_timestep_'+str(md_timestep)+'_no_timesteps_'+str(no_timestep_[k])+'_SRDMDratio_'+str(SRD_MD_ratio_)+'_'
                         run_code=''
                         no_SRD=str(int(srd_count[box_size_index])) 
                         #print(no_SRD)
@@ -478,7 +490,7 @@ def sim_file_prod_fix_deform_pure_individual_MYRIAD(nu_bar,erate_,var_choice_1,v
                         rand_int_1 =str( np.random.randint(0, 1000000))
                         rand_int_2 =str(np.random.randint(0, 1000000))
                         num_proc=str(np_req)
-                        erate=str(erate_[m])
+                        erate=str(erate_[k])
                         
 
 
