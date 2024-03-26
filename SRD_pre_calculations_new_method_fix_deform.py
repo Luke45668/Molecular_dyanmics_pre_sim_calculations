@@ -53,7 +53,7 @@ real_fluid_density = 764.95 # H20
 T_K=307.65 # fluid temp at density listed
 #%% calcuating lengthscale coefficient 
 n_particle=2
-phi=np.array([0.2,0.1,0.05,0.03,0.02,0.01,0.008,0.005,0.003,0.002,0.0015,0.0013,0.0012])
+phi=np.array([0.2,0.1,0.05,0.03,0.02,0.01,0.008,0.005,0.003,0.002,0.0015,0.0013,0.0007])
 #phi=np.array([0.0012,0.0010,0.0008,0.0006])
 fina_size=300 # need to increase this if you want bigger boxes
 box_size_bar=np.linspace(1,fina_size,fina_size)
@@ -414,9 +414,10 @@ tempdir_req=''
 SRD_MD_ratio_ = 10
 md_timestep=collision_time_negative_bar/SRD_MD_ratio_
 erate_= np.array([0.0005,0.001,0.002,0.005,0.01])
+erate= np.array([0.02,0.0175,0.015,0.0125,0.01]) 
 
 # estimating number of steps  required
-strain=2
+strain=5
 delta_t_md=md_timestep
 strain_rate= erate_
 number_steps_needed= np.ceil(strain/(strain_rate*delta_t_md))
@@ -435,7 +436,7 @@ i_=0
 j_=3
 Path_2_generic='/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Shell_scripts_for_MYRIAD'
 
-box_size_index=10
+box_size_index=12
 fluid_name='M_'+str(fluid_particle_number_density)+'_L_'+str(box_size_bar[box_size_index])+'_'
 
 
@@ -444,7 +445,7 @@ realisation_index_=[1,2,3]
 
 tempdir_req='1G'
 ram_requirement='5G'
-wall_time='4:00:00'
+wall_time='12:00:00'
 np_req=str(8)
 phi_= str(phi[box_size_index])
 
