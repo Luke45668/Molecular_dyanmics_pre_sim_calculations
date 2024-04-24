@@ -104,7 +104,6 @@ plt.xticks(pi_phi_ticks,pi_phi_tick_labels)
 plt.tight_layout()
 #plt.savefig("phi_pre_histogram_"+str(number_of_points)+"_points.pdf",dpi=1200)
 plt.show()
-
 #%% generating random orientations 
 
 equilibrium_triangle_side_length=3
@@ -277,14 +276,21 @@ plt.show()
 
 Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
-abs_path_2_lammps_exec='/Users/luke_dev/Documents/lammps_hirotori/build_m3maxbook/lmp_mpi'
+# for running on my computer 
+#abs_path_2_lammps_exec='/Users/luke_dev/Documents/lammps_hirotori/build_serial_maxbook/lmp'
 # abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.MPCD_with_hookean_flat_elastic_particle_only_dump_hdf5'
-abs_path_2_lammps_script='/Users/luke_dev/Documents/LSC/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5'
+#abs_path_2_lammps_script='/Users/luke_dev/Documents/LSC/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5'
+
+# for running on myriad 
+abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5'
+
+
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
 
 
-extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n module load hdf/5-1.12.3-impi/intel-2022'
+extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n module load hdf/5-1.10.6/gnu-10.2.0'
 wd_path='/home/ucahlrl/Scratch/output/'
 num_task_req=''
 data_transfer_instructions=''
@@ -293,29 +299,33 @@ VP_ave_freq=10000
 md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 #erate= np.array([0.0008,0.001,0.002,0.005,0.01,0.1])
-erate= np.array([0.2,0.1,0.05,0.025,0.0225,0.02,0.0175,0.015,0.0125,0.01])#0.0075,0.005,0.0025,0.001,0.0001]) 
-#erate=np.array([0.01875,0.01625,0.01375,0.01125,0.00875])
+erate= np.array([0.03,0.0275,0.025,0.0225,0.02,0.0175,0.015,0.0125,0.01,0.0075])#0.0075,0.005,0.0025,0.001,0.0001]) 
+#erate=np.array([0.03,0.0275,0.025])
 #erate= np.array([0.0075,0.005,0.0025]) longer runs which need checkpointing
-dump_freq_=100000
-thermo_freq=10000
+dump_freq_=10000
+thermo_freq=10000#dump_freq_
 i_=0
 j_=number_of_points
 fluid_name='langevinrun'
 bending_stiffness=np.array([10000]) # original 50,100,200,400
 #internal_stiffness=np.array([60,80,100]) # 20 does nothing 
-internal_stiffness=np.array([20])
+internal_stiffness=np.array([60])
 #no_timestep_=np.array([2000000]) 
 # just for dist test 
 #no_timestep_=np.array([1000]) 
 #phantom_mass=np.array([0.01])
 equilibrium_triangle_side_length=3
 tempdir_req='1G'
-ram_requirement='8G'
-wall_time='48:00:00'
-damp=0.1
+ram_requirement='2G'
+wall_time='00:30:00'
+damp=0.05
 
 np_req=np.array([1,1,1,1,1,1,1,1,1,1]).astype('str')
+initial_temp=0.81
+inital_temp_multipl=np.array([1, 1, 1, 1, 1,
+       1, 1, 1,1, 1])
 
+input_temp=initial_temp*inital_temp_multipl
 
 realisation_index_=[1,2,3]
 realisation_index_=np.arange(0,1000,1)
@@ -327,7 +337,7 @@ def compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multipl
       return no_timestep_
 
 # for MYRIAD run
-total_strain=150
+total_strain=600
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
 
 
@@ -346,15 +356,15 @@ no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timeste
 # for 8,16,32,36
 var_choice_1=erate
 var_choice_2=internal_stiffness
-
-def sim_file_prod_flat_elastic_initial_MYRIAD(coordinates_tuple_3d,erate,equilibrium_triangle_side_length,var_choice_1,var_choice_2,internal_stiffness,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,no_timestep_,thermo_freq,md_timestep,i_,j_,box_size_bar,box_size_index,Path_2_shell_scirpts,Path_2_generic,fluid_name):
+# individual shear rates 
+def sim_file_prod_flat_elastic_initial_MYRIAD(input_temp,coordinates_tuple_3d,erate,equilibrium_triangle_side_length,var_choice_1,var_choice_2,internal_stiffness,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,no_timestep_,thermo_freq,md_timestep,i_,j_,box_size_bar,box_size_index,Path_2_shell_scirpts,Path_2_generic,fluid_name):
     
     os.chdir(Path_2_shell_scirpts)
     META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
     specific_email = 'luke.debono.21@ucl.ac.uk'
-    simulation_batch_folder= 'simulation_batch_scripts_'+fluid_name+'_eqts_'+str(equilibrium_triangle_side_length)+'_realisations_'+str(j_)+'_box_size_'+str(box_size_bar[box_size_index])+'_bendstiff_'+str(bending_stiffness[0])+'_intstiff_'+str(internal_stiffness[0])+'_'+str(internal_stiffness[-1])+'_erate_'+str(erate)+'_'+META_DATA
+    simulation_batch_folder= 'simulation_batch_scripts_'+fluid_name+'_eqts_'+str(equilibrium_triangle_side_length)+'_realisations_'+str(j_)+'_box_size_'+str(box_size_bar[box_size_index])+'_damp_'+str(damp)+'_bendstiff_'+str(bending_stiffness[0])+'_intstiff_'+str(internal_stiffness[0])+'_'+str(internal_stiffness[-1])+'_erate_'+str(erate)+'_'+META_DATA
     os.mkdir(simulation_batch_folder)
-    sim_batchcode=826519#str(np.random.randint(0, 1000000))
+    sim_batchcode=str(np.random.randint(0, 1000000))
     run_code_list=[]
     # test to check consistency of cores request 
 
@@ -395,7 +405,7 @@ def sim_file_prod_flat_elastic_initial_MYRIAD(coordinates_tuple_3d,erate,equilib
                             phantom_bead_3=coordinates_tuple_3d[j][5]
 
                                         
-                            run_code_individual ='mpirun -np '+str(num_proc)+'  '+abs_path_2_lammps_exec+' -var damp '+str(damp)+' -var erate_in '+str(erate)+' -var equilirbium_triangle_side_length '+str(equilibrium_triangle_side_length)+\
+                            run_code_individual =abs_path_2_lammps_exec+' -var temp '+str(input_temp)+' -var damp '+str(damp)+' -var erate_in '+str(erate)+' -var equilirbium_triangle_side_length '+str(equilibrium_triangle_side_length)+\
                             ' -var bead_1_x_position '+str(stokes_bead_1[0])+' -var bead_1_y_position '+str(stokes_bead_1[1])+' -var bead_1_z_position '+str(stokes_bead_1[2])+' -var bead_2_x_position '+str(stokes_bead_2[0])+\
                             ' -var bead_2_y_position '+str(stokes_bead_2[1])+' -var bead_2_z_position '+str(stokes_bead_2[2])+' -var bead_3_x_position '+str(stokes_bead_3[0])+' -var bead_3_y_position '+str(stokes_bead_3[1])+\
                             ' -var bead_3_z_position '+str(stokes_bead_3[2])+' -var bead_1p_x_position '+str(phantom_bead_1[0])+' -var bead_1p_y_position '+str(phantom_bead_1[1])+' -var bead_1p_z_position '+str(phantom_bead_1[2])+\
@@ -412,41 +422,77 @@ def sim_file_prod_flat_elastic_initial_MYRIAD(coordinates_tuple_3d,erate,equilib
                             
                             run_code = run_code[:-2]
 
-                            py2bash_launch_overwriter.py2bash_launch_overwriter(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,num_proc,wd_path,extra_code,run_code,data_transfer_instructions)
+                            py2bash_launch_overwriter.py2bash_launch_overwriter_serial(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,num_proc,wd_path,extra_code,run_code,data_transfer_instructions)
     return run_code_list, sim_batchcode
 
+def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(input_temp,coordinates_tuple_3d,erate,equilibrium_triangle_side_length,var_choice_1,var_choice_2,internal_stiffness,data_transfer_instructions,extra_code,wd_path,np_req,num_task_req,tempdir_req,wall_time,ram_requirement,realisation_index_,VP_ave_freq,abs_path_2_lammps_exec,abs_path_2_lammps_script,no_timestep_,thermo_freq,md_timestep,i_,j_,box_size_bar,box_size_index,Path_2_shell_scirpts,Path_2_generic,fluid_name):
+    
+    os.chdir(Path_2_shell_scirpts)
+    META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+    specific_email = 'luke.debono.21@ucl.ac.uk'
+    simulation_batch_folder= 'simulation_batch_scripts_'+fluid_name+'_eqts_'+str(equilibrium_triangle_side_length)+'_realisations_'+str(j_)+'_box_size_'+str(box_size_bar[box_size_index])+'_damp_'+str(damp)+'_bendstiff_'+str(bending_stiffness[0])+'_intstiff_'+str(internal_stiffness[0])+'_'+str(internal_stiffness[-1])+'_erate_'+str(erate[0])+'_'+str(erate[-1])+'_'+META_DATA
+    os.mkdir(simulation_batch_folder)
+    sim_batchcode=str(np.random.randint(0, 1000000))
+    run_code_list=[]
+    # test to check consistency of cores request 
 
+    
 
-# %%
+    #for n in range(0,np_req.size):
+        #or now just use one realisation 
+    for k in range(0,var_choice_1.size):    
+    #for k in range(0,1):   
+        for m in range(0,var_choice_2.size): 
+                    #for m in range(0,1):  
+                            for j in range(i_,j_):
+                                param_set_code=str(np.random.randint(0, 1000000))
+                                simulation_run_name=fluid_name+'_'+str(sim_batchcode)+'_'+param_set_code+'_realisation_'+str(j)+'_Bk_'+str(bending_stiffness[0])+'_np_'+str(np_req[k])+'_no_timesteps_'+str(no_timestep_[k])+'_intstiff_'+str(var_choice_2[m])+'_eqsl_'+str(equilibrium_triangle_side_length)+'_erate_'+str(erate[k])+'_'
+                                run_code=''
+                            
+                                #print(no_SRD)
+                                box_size = str(box_size_bar[box_size_index])
+                                timestep_input= str(md_timestep)
+                                # number of chunks to use for VP averaging
+                                SRD_MD_ratio=str(int(SRD_MD_ratio_))
+                                lamda= str(collision_time_negative_bar)
+                                dump_freq=str(10000)
+                                thermo_freq = str(10000)
+                                no_timesteps = str(no_timestep_[k])
+                                rand_int =str(np.random.randint(0, 1000000))
+                                rand_int_1 =str( np.random.randint(0, 1000000))
+                                rand_int_2 =str(np.random.randint(0, 1000000))
+                                rand_int_3=str(np.random.randint(0,1000000))
+                                num_proc=str(np_req[k])
+                            
 
-outputs= sim_file_prod_flat_elastic_initial_MYRIAD(coordinates_tuple_3d,
-                                                   erate,
-                                                   equilibrium_triangle_side_length,
-                                                   var_choice_1,
-                                                   var_choice_2,
-                                                   internal_stiffness,
-                                                   data_transfer_instructions,
-                                                   extra_code,
-                                                   wd_path,
-                                                   np_req,
-                                                   num_task_req,
-                                                   tempdir_req,
-                                                   wall_time,
-                                                   ram_requirement,
-                                                   realisation_index_,
-                                                   VP_ave_freq,
-                                                   abs_path_2_lammps_exec,
-                                                   abs_path_2_lammps_script,
-                                                   no_timestep_,
-                                                   thermo_freq,
-                                                   md_timestep,
-                                                   i_,j_,box_size_bar,
-                                                   box_size_index,
-                                                   Path_2_shell_scirpts,
-                                                   Path_2_generic,
-                                                   fluid_name)
-run_code_list=outputs[0]
-sim_batchcode=outputs[1]
+                                stokes_bead_1=coordinates_tuple_3d[j][0]
+                                stokes_bead_2=coordinates_tuple_3d[j][1]
+                                stokes_bead_3=coordinates_tuple_3d[j][2]
+                                phantom_bead_1=coordinates_tuple_3d[j][3] 
+                                phantom_bead_2=coordinates_tuple_3d[j][4]
+                                phantom_bead_3=coordinates_tuple_3d[j][5]
+
+                                            
+                                run_code_individual =abs_path_2_lammps_exec+' -var temp '+str(input_temp[k])+' -var damp '+str(damp)+' -var erate_in '+str(erate[k])+' -var equilirbium_triangle_side_length '+str(equilibrium_triangle_side_length)+\
+                                ' -var bead_1_x_position '+str(stokes_bead_1[0])+' -var bead_1_y_position '+str(stokes_bead_1[1])+' -var bead_1_z_position '+str(stokes_bead_1[2])+' -var bead_2_x_position '+str(stokes_bead_2[0])+\
+                                ' -var bead_2_y_position '+str(stokes_bead_2[1])+' -var bead_2_z_position '+str(stokes_bead_2[2])+' -var bead_3_x_position '+str(stokes_bead_3[0])+' -var bead_3_y_position '+str(stokes_bead_3[1])+\
+                                ' -var bead_3_z_position '+str(stokes_bead_3[2])+' -var bead_1p_x_position '+str(phantom_bead_1[0])+' -var bead_1p_y_position '+str(phantom_bead_1[1])+' -var bead_1p_z_position '+str(phantom_bead_1[2])+\
+                                ' -var bead_2p_x_position '+str(phantom_bead_2[0])+' -var bead_2p_y_position '+str(phantom_bead_2[1])+' -var bead_2p_z_position '+str(phantom_bead_2[2])+' -var bead_3p_x_position '+str(phantom_bead_3[0])+\
+                                ' -var bead_3p_y_position '+str(phantom_bead_3[1])+' -var bead_3p_z_position '+str(phantom_bead_3[2])+\
+                                ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[m])+' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+\
+                                ' -var VP_ave_freq '+str(VP_ave_freq)+' -var realisation_index '+str(realisation_index_[j])+' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+\
+                                ' -var rand_int_2 '+rand_int_2+' -var rand_int_3 '+rand_int_3+' -var box_size '+box_size+' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+\
+                                ' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+no_timesteps+' -in '+abs_path_2_lammps_script+' \n '  #>> '+prod_run_file_name+' & \n'
+                                
+                                run_code_list.append(run_code_individual)
+                                run_code=run_code +run_code_individual
+
+                                
+                                run_code = run_code[:-2]
+
+                                py2bash_launch_overwriter.py2bash_launch_overwriter_serial(Path_2_generic,simulation_batch_folder,simulation_run_name,specific_email,wall_time,ram_requirement,tempdir_req,num_task_req,num_proc,wd_path,extra_code,run_code,data_transfer_instructions)
+    return run_code_list, sim_batchcode
+
 
 # %%
 os.chdir("/Users/luke_dev/Documents/simulation_test_folder/")
@@ -455,7 +501,8 @@ k=0
 for n in range(erate.size): 
     os.chdir("/Users/luke_dev/Documents/simulation_test_folder/")
     MyFile=open('K_'+str(internal_stiffness[0])+'_damp_'+str(damp)+'_erate_'+str(erate[n])+'.sh','w')
-    outputs= sim_file_prod_flat_elastic_initial_MYRIAD(coordinates_tuple_3d,
+    outputs= sim_file_prod_flat_elastic_initial_MYRIAD(input_temp[n],
+                                                    coordinates_tuple_3d,
                                                     erate[n],
                                                     equilibrium_triangle_side_length,
                                                     var_choice_1,
@@ -488,3 +535,38 @@ for n in range(erate.size):
         MyFile.write('\n')
     MyFile.close()
 
+
+# %%
+# all in one file for myriad
+
+sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(input_temp,
+                                                     coordinates_tuple_3d,
+                                                     erate,
+                                                     equilibrium_triangle_side_length,
+                                                     var_choice_1,
+                                                     var_choice_2,
+                                                     internal_stiffness,
+                                                     data_transfer_instructions,
+                                                     extra_code,wd_path,
+                                                     np_req,
+                                                     num_task_req,
+                                                     tempdir_req,
+                                                     wall_time,
+                                                     ram_requirement,
+                                                     realisation_index_,
+                                                     VP_ave_freq,
+                                                     abs_path_2_lammps_exec,
+                                                     abs_path_2_lammps_script,
+                                                     no_timestep_,
+                                                     thermo_freq,
+                                                     md_timestep,
+                                                     i_,
+                                                     j_,
+                                                     box_size_bar,
+                                                     box_size_index,
+                                                     Path_2_shell_scirpts,
+                                                     Path_2_generic,
+                                                     fluid_name)
+    
+
+# %%
