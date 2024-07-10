@@ -31,7 +31,7 @@ from sim_file_producer_SRD import *
 box_size_bar=100
 
 
-number_of_points=10
+number_of_points=20
 
 
 
@@ -53,9 +53,9 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
 # for running on my computer 
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD/lmp_mpi'
-# abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.MPCD_with_hookean_flat_elastic_particle_only_dump_hdf5'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol_rattle'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol_rattle'
 
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
@@ -86,12 +86,20 @@ erate=np.array([1,0.9,0.7,0.5,0.2,0.1,0.09,0.08,
                 0.02,0.0175,0.015,0.0125,
                 0.01,0.0075,0.005,0.0025,
                 0.001,0.00075,0.0005])
+
+# erate=np.array([1,0.8,0.6,0.4,0.2,0.1,0.08,
+#                 0.06,0.04,
+#                 0.03,0.025,
+#                 0.02,0.015,
+#                 0.01,0.005,
+#                 0.001,0.0005])
 # erate=np.array([100,50,25,10,5])
 
 i_=0
 j_=number_of_points
 fluid_name='langevinrun'
 bending_stiffness=np.array([500]) # original 50,100,200,400
+bending_stiffness=np.array([10000])
 #internal_stiffness=np.array([60,80,100]) # 20 does nothing 
 def product_constraint_inputs(damp_upper_bound,damp_lower_bound,internal_stiff,initial_damp,n_sets):
       kdamp=internal_stiff*initial_damp
@@ -178,6 +186,7 @@ def folder_check_or_create(filepath,folder):
 
 
 
+
 dump_freq=np.array([100, 100, 100, 100, 100, 100,1000, 1000,
  1000, 1000, 1000, 1000, 1000, 1000, 1000,
  1000, 10000, 10000, 10000, 10000, 10000, 10000,
@@ -256,7 +265,7 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
                                     run_code_individual ="mpirun -np "+np_req+" "+abs_path_2_lammps_exec+' -var temp '+str(input_temp[k])+' -var damp '\
                                         +str(damp[h])+' -var erate_in '+str(erate[k])+' -var equilirbium_triangle_side_length '\
                                             +str(equilibrium_triangle_side_length)+\
-                                    ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[0])+\
+                                    ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[m])+\
                                         ' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+\
                                     ' -var VP_ave_freq '+str(VP_ave_freq)+' -var realisation_index '+str(realisation_index_[j])+\
                                         ' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+\
