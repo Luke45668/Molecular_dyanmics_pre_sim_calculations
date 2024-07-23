@@ -25,6 +25,7 @@ import math as m
 import scipy.stats
 from datetime import datetime
 from sim_file_producer_SRD import *
+import subprocess as subproc
 
 
 
@@ -289,7 +290,7 @@ collision_time_negative_bar=0.05071624521210362
 
 
 #erate= np.array([0.0075,0.005,0.0025]) longer runs which need checkpointing
-erate=np.array([1,0.9,0.7,0.5,0.2,0.1,0.09,0.08,
+erate=np.array([1,0.9,0.7,0.5,0.35,0.2,0.1,0.09,0.08,
                 0.07,0.06,0.05,0.04,
                 0.03,0.0275,0.025,0.0225,
                 0.02,0.0175,0.015,0.0125,
@@ -307,7 +308,7 @@ bending_stiffness=np.array([10000]) # original 50,100,200,400
 damp_init=0.03633 # based on H20 as reference fluid 
 
 
-internal_stiffness=np.array([1500,2000,2500])
+internal_stiffness=np.array([500,2000])
 
 
 
@@ -335,7 +336,7 @@ def compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multipl
       return no_timestep_
 
 # for MYRIAD run
-total_strain=50
+total_strain=400
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
@@ -365,166 +366,272 @@ def folder_check_or_create(filepath,folder):
 # initial coordinates 
 j=0
 n=0
-l=0 # intstiff parameter
+l=1 # intstiff parameter
 # data so far 
-#[0.18999999999999928,
-#  0.4299999999999995,
-#  0.5299999999999996,
-#  0.5799999999999996,
-#  0.6499999999999997,
-# 0.6599999999999997,
-#  0.6599999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-# 0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-# 0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-#  0.6699999999999997,
-# 0.6699999999999997,
-# 0.6699999999999997, 
-# 0.6699999999999997
-# 0.6699999999999997,
-# 0.6699999999999997
-#0.6699999999999997
-#0.6699999999999997],
 
+input_temp_seed =np.array([
+ 0.3,
+ 0.3,
+ 0.4,
+ 0.5,
+ 0.5,
+ 0.5,
+0.6599999999999997,
+ 0.6599999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+ 0.6699999999999997,
+0.6699999999999997,
+0.6699999999999997, 
+0.6699999999999997,
+0.6699999999999997,
+0.6699999999999997,
+0.6699999999999997,
+0.6699999999999997])
 count=0
-tolerance=0.01
+tolerance=0.05
 increment=0.01
 input_temp=1
 desired_temp=1
 from log2numpy import *
-thermo_vars='         KinEng         PotEng        c_myTemp        c_bias         TotEng    '
-filepath='/Users/luke_dev/Documents/simulation_test_folder/temp_iteration_test'
+thermo_vars='         KinEng         PotEng         Press         c_myTemp        c_bias         TotEng    '
+filepath='/Users/luke_dev/Documents/simulation_test_folder/new_temp_iteration_test'
 os.chdir(filepath)
 temp_comparison=0.5
 new_temp=[]
-for n in range(5,10):
-    input_temp=1
-    temp_comparison=0.5
-    while np.abs(temp_comparison)>tolerance:
-    # for 8,16,32,36
-        var_choice_1=erate
-        var_choice_2=internal_stiffness
-        # individual shear rates 
+new_temp_array=np.zeros((erate.size))
 
-        run_code_list=[]
-        # test to check consistency of cores request 
+temp_comparison_list_conv=[]
+input_temp_list_conv=[]
+#%%
+# this could be parallelised probably qutie easily
 
-
-        run_code=''
-        erate_in=erate[n]
-        #print(no_SRD)
-        box_size = str(box_size_bar[box_size_index])
-        timestep_input= str(md_timestep)
-        # number of chunks to use for VP averaging
-        SRD_MD_ratio=str(int(SRD_MD_ratio_))
-        lamda= str(collision_time_negative_bar)
-
-        no_timesteps = str(no_timestep_[n])
-        rand_int =str(np.random.randint(0, 1000000))
-        rand_int_1 =str( np.random.randint(0, 1000000))
-        rand_int_2 =str(np.random.randint(0, 1000000))
-        rand_int_3=str(np.random.randint(0,1000000))
-
-
-
-        stokes_bead_1=coordinates_tuple_3d[j][0]
-        stokes_bead_2=coordinates_tuple_3d[j][1]
-        stokes_bead_3=coordinates_tuple_3d[j][2]
-        phantom_bead_1=coordinates_tuple_3d[j][3] 
-        phantom_bead_2=coordinates_tuple_3d[j][4]
-        phantom_bead_3=coordinates_tuple_3d[j][5]
-
-                    
-        run_code_individual =abs_path_2_lammps_exec+' -var temp '+str(input_temp)+' -var damp '\
-            +str(damp_init)+' -var erate_in '+str(erate_in)+' -var equilirbium_triangle_side_length '\
-                +str(equilibrium_triangle_side_length)+\
-        ' -var bead_1_x_position '+str(stokes_bead_1[0])+' -var bead_1_y_position '+str(stokes_bead_1[1])+\
-            ' -var bead_1_z_position '+str(stokes_bead_1[2])+' -var bead_2_x_position '+str(stokes_bead_2[0])+\
-        ' -var bead_2_y_position '+str(stokes_bead_2[1])+' -var bead_2_z_position '+str(stokes_bead_2[2])+\
-            ' -var bead_3_x_position '+str(stokes_bead_3[0])+' -var bead_3_y_position '+str(stokes_bead_3[1])+\
-        ' -var bead_3_z_position '+str(stokes_bead_3[2])+' -var bead_1p_x_position '+str(phantom_bead_1[0])+\
-            ' -var bead_1p_y_position '+str(phantom_bead_1[1])+' -var bead_1p_z_position '+str(phantom_bead_1[2])+\
-        ' -var bead_2p_x_position '+str(phantom_bead_2[0])+' -var bead_2p_y_position '+str(phantom_bead_2[1])+\
-            ' -var bead_2p_z_position '+str(phantom_bead_2[2])+' -var bead_3p_x_position '+str(phantom_bead_3[0])+\
-        ' -var bead_3p_y_position '+str(phantom_bead_3[1])+' -var bead_3p_z_position '+str(phantom_bead_3[2])+\
-        ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[l])+\
-            ' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(999)+\
-        ' -var VP_ave_freq '+str(VP_ave_freq)+' -var realisation_index '+str(realisation_index_[j])+\
-            ' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+\
-        ' -var rand_int_2 '+rand_int_2+' -var rand_int_3 '+rand_int_3+' -var box_size '+box_size+\
-            ' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+\
-        ' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+\
-            no_timesteps+' -in '+abs_path_2_lammps_script+' \n '  #>> '+prod_run_file_name+' & \n'
-
-        os.system(run_code_individual)
-
-        logfile_name="log.langevinrun_no"+str(999)+"_hookean_flat_elastic_"+rand_int+\
-            "_0_23_0.03633_0.005071624521210362_100_100_"+no_timesteps+"_0.2_gdot_"+str(erate_in)+\
-            "_BK_10000_K_"+str(internal_stiffness[l])
-        log_file_data=log2numpy_reader(logfile_name,
-                                    filepath,
-                                    thermo_vars)
-
-        temp_out=np.mean(log_file_data[5:,4])
-        temp_comparison=desired_temp-temp_out
-        count+=1
-
-        if np.abs(temp_comparison)>tolerance:
-            if temp_comparison>0: # pos
-                input_temp+=increment
-                if input_temp<0:
-                    breakpoint
-                print("New input temp",input_temp)
-            elif temp_comparison<0:
-                input_temp-=increment
-                if input_temp<0:
-                    breakpoint
-                print("New input temp",input_temp)
-
-        else:
-            print("temp controlled")
-            new_temp.append(input_temp)
-
-
-     
-     
-         
-
-     
-#log.${fluid_name}_no${sim_batchcode}_hookean_flat_elastic_${rand_int}_${realisation_index}_${box_size}_${damp}_${timestep_input}_${dump_freq}_${thermo_freq}_${no_timesteps}_${timestep_multiplier}_gdot_${erate_in}_BK_${angle_stiff}_K_${spring_stiffness}
-
-
-
-
+# need to use this loop to find a temp which gives T=1
+# then another loop to run it until we get 10 sucessful runs 
+erate_1=0
+erate_2=1
+for n in range(erate_1,erate_2):
+    input_temp=input_temp_seed[n]
     
+    temp_comparison=0.5
+    for j in range(1):
+    
+        #input_temp=input_temp_seed[n]
+        temp_comparison=0.5
+        while np.abs(temp_comparison)>tolerance:
+        # for 8,16,32,36
+            var_choice_1=erate
+            var_choice_2=internal_stiffness
+            # individual shear rates 
+
+            run_code_list=[]
+            # test to check consistency of cores request 
+
+
+            run_code=''
+            erate_in=erate[n]
+            #print(no_SRD)
+            box_size = str(box_size_bar[box_size_index])
+            timestep_input= str(md_timestep)
+            # number of chunks to use for VP averaging
+            SRD_MD_ratio=str(int(SRD_MD_ratio_))
+            lamda= str(collision_time_negative_bar)
+
+            no_timesteps = str(no_timestep_[n])
+            rand_int =str(np.random.randint(0, 1000000))
+            rand_int_1 =str( np.random.randint(0, 1000000))
+            rand_int_2 =str(np.random.randint(0, 1000000))
+            rand_int_3=str(np.random.randint(0,1000000))
 
 
 
-# %% prodicing files in simulation test folder
+            stokes_bead_1=coordinates_tuple_3d[j][0]
+            stokes_bead_2=coordinates_tuple_3d[j][1]
+            stokes_bead_3=coordinates_tuple_3d[j][2]
+            phantom_bead_1=coordinates_tuple_3d[j][3] 
+            phantom_bead_2=coordinates_tuple_3d[j][4]
+            phantom_bead_3=coordinates_tuple_3d[j][5]
 
-os.chdir("/Users/luke_dev/Documents/simulation_test_folder/")
-kdamp=int(internal_stiffness_init*damp_init)
-path="/Users/luke_dev/Documents/simulation_test_folder/low_damp_test"
-# os.mkdir(path)
-os.chdir(path)
+                        
+            run_code_individual =abs_path_2_lammps_exec+' -var temp '+str(input_temp)+' -var damp '\
+                +str(damp_init)+' -var erate_in '+str(erate_in)+' -var equilirbium_triangle_side_length '\
+                    +str(equilibrium_triangle_side_length)+\
+            ' -var bead_1_x_position '+str(stokes_bead_1[0])+' -var bead_1_y_position '+str(stokes_bead_1[1])+\
+                ' -var bead_1_z_position '+str(stokes_bead_1[2])+' -var bead_2_x_position '+str(stokes_bead_2[0])+\
+            ' -var bead_2_y_position '+str(stokes_bead_2[1])+' -var bead_2_z_position '+str(stokes_bead_2[2])+\
+                ' -var bead_3_x_position '+str(stokes_bead_3[0])+' -var bead_3_y_position '+str(stokes_bead_3[1])+\
+            ' -var bead_3_z_position '+str(stokes_bead_3[2])+' -var bead_1p_x_position '+str(phantom_bead_1[0])+\
+                ' -var bead_1p_y_position '+str(phantom_bead_1[1])+' -var bead_1p_z_position '+str(phantom_bead_1[2])+\
+            ' -var bead_2p_x_position '+str(phantom_bead_2[0])+' -var bead_2p_y_position '+str(phantom_bead_2[1])+\
+                ' -var bead_2p_z_position '+str(phantom_bead_2[2])+' -var bead_3p_x_position '+str(phantom_bead_3[0])+\
+            ' -var bead_3p_y_position '+str(phantom_bead_3[1])+' -var bead_3p_z_position '+str(phantom_bead_3[2])+\
+            ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[l])+\
+                ' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(999)+\
+            ' -var VP_ave_freq '+str(VP_ave_freq)+' -var realisation_index '+str(realisation_index_[j])+\
+                ' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+\
+            ' -var rand_int_2 '+rand_int_2+' -var rand_int_3 '+rand_int_3+' -var box_size '+box_size+\
+                ' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+\
+            ' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+\
+                no_timesteps+' -in '+abs_path_2_lammps_script+' \n '  #>> '+prod_run_file_name+' & \n'
 
-k=0
-#os.chdir("/Volumes/Backup Plus 1/PhD_/Rouse Model simulations/Using LAMMPS imac/Simulation_run_folder/bug_test_spring_force/")
+            #os.system(run_code_individual)
+            subproc.run(run_code_individual,shell=True)
 
+            logfile_name="log.langevinrun_no"+str(999)+"_hookean_flat_elastic_"+rand_int+\
+                "_"+str(realisation_index_[j])+"_23_0.03633_0.005071624521210362_100_100_"+no_timesteps+"_0.2_gdot_"+str(erate_in)+\
+                "_BK_10000_K_"+str(internal_stiffness[l])
+            log_file_data=log2numpy_reader(logfile_name,
+                                        filepath,
+                                        thermo_vars)
+
+            temp_out=np.mean(log_file_data[5:,5])
+            temp_comparison=desired_temp-temp_out
+            temp_comparison_list_conv.append(temp_comparison)
+            input_temp_list_conv.append(input_temp)
+            print("Temp comparison", temp_comparison)
+            count+=1
+
+            if np.abs(temp_comparison)>tolerance:
+                if temp_comparison>0: # pos
+                    input_temp+=increment
+
+                    if input_temp<0:
+                     breakpoint
+                       
+                     print("New input temp",input_temp)
+                elif temp_comparison<0:
+                    input_temp-=increment
+                    if input_temp<0:
+                     breakpoint
+                    
+                     print("New input temp",input_temp)
+
+            else:
+                print("temp controlled")
+                new_temp_array[n]=input_temp
+                # os.system("cp -r "+logfile_name+ " passed_tests/") #not working 
+                # os.system("cp -r *"+rand_int+"_"+str(realisation_index_[j])+"*h5 passed_tests/")
+                # os.system("cp -r *"+rand_int+"_"+str(realisation_index_[j])+"*dump passed_tests/")
+
+
+#%% run at fixed t
+for n in range(erate_1,erate_2):
+    input_temp= new_temp_array[n]
+    
+    
+    for j in range(j_):
+    
+        #input_temp=input_temp_seed[n]
+        temp_comparison=0.5
+        while np.abs(temp_comparison)>tolerance:
+        # for 8,16,32,36
+            var_choice_1=erate
+            var_choice_2=internal_stiffness
+            # individual shear rates 
+
+            run_code_list=[]
+            # test to check consistency of cores request 
+
+
+            run_code=''
+            erate_in=erate[n]
+            #print(no_SRD)
+            box_size = str(box_size_bar[box_size_index])
+            timestep_input= str(md_timestep)
+            # number of chunks to use for VP averaging
+            SRD_MD_ratio=str(int(SRD_MD_ratio_))
+            lamda= str(collision_time_negative_bar)
+
+            no_timesteps = str(no_timestep_[n])
+            rand_int =str(np.random.randint(0, 1000000))
+            rand_int_1 =str( np.random.randint(0, 1000000))
+            rand_int_2 =str(np.random.randint(0, 1000000))
+            rand_int_3=str(np.random.randint(0,1000000))
+
+
+
+            stokes_bead_1=coordinates_tuple_3d[j][0]
+            stokes_bead_2=coordinates_tuple_3d[j][1]
+            stokes_bead_3=coordinates_tuple_3d[j][2]
+            phantom_bead_1=coordinates_tuple_3d[j][3] 
+            phantom_bead_2=coordinates_tuple_3d[j][4]
+            phantom_bead_3=coordinates_tuple_3d[j][5]
+
+                        
+            run_code_individual =abs_path_2_lammps_exec+' -var temp '+str(input_temp)+' -var damp '\
+                +str(damp_init)+' -var erate_in '+str(erate_in)+' -var equilirbium_triangle_side_length '\
+                    +str(equilibrium_triangle_side_length)+\
+            ' -var bead_1_x_position '+str(stokes_bead_1[0])+' -var bead_1_y_position '+str(stokes_bead_1[1])+\
+                ' -var bead_1_z_position '+str(stokes_bead_1[2])+' -var bead_2_x_position '+str(stokes_bead_2[0])+\
+            ' -var bead_2_y_position '+str(stokes_bead_2[1])+' -var bead_2_z_position '+str(stokes_bead_2[2])+\
+                ' -var bead_3_x_position '+str(stokes_bead_3[0])+' -var bead_3_y_position '+str(stokes_bead_3[1])+\
+            ' -var bead_3_z_position '+str(stokes_bead_3[2])+' -var bead_1p_x_position '+str(phantom_bead_1[0])+\
+                ' -var bead_1p_y_position '+str(phantom_bead_1[1])+' -var bead_1p_z_position '+str(phantom_bead_1[2])+\
+            ' -var bead_2p_x_position '+str(phantom_bead_2[0])+' -var bead_2p_y_position '+str(phantom_bead_2[1])+\
+                ' -var bead_2p_z_position '+str(phantom_bead_2[2])+' -var bead_3p_x_position '+str(phantom_bead_3[0])+\
+            ' -var bead_3p_y_position '+str(phantom_bead_3[1])+' -var bead_3p_z_position '+str(phantom_bead_3[2])+\
+            ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[l])+\
+                ' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(999)+\
+            ' -var VP_ave_freq '+str(VP_ave_freq)+' -var realisation_index '+str(realisation_index_[j])+\
+                ' -var lambda '+str(lamda)+' -var rand_int '+rand_int+' -var rand_int_1 '+rand_int_1+\
+            ' -var rand_int_2 '+rand_int_2+' -var rand_int_3 '+rand_int_3+' -var box_size '+box_size+\
+                ' -var timestep_input '+timestep_input+' -var SRD_MD_ratio '+SRD_MD_ratio+\
+            ' -var dump_freq '+dump_freq+' -var thermo_freq '+thermo_freq+' -var no_timesteps '+\
+                no_timesteps+' -in '+abs_path_2_lammps_script+' \n '  #>> '+prod_run_file_name+' & \n'
+
+            #os.system(run_code_individual)
+            subproc.run(run_code_individual,shell=True)
+
+            logfile_name="log.langevinrun_no"+str(999)+"_hookean_flat_elastic_"+rand_int+\
+                "_"+str(realisation_index_[j])+"_23_0.03633_0.005071624521210362_100_100_"+no_timesteps+"_0.2_gdot_"+str(erate_in)+\
+                "_BK_10000_K_"+str(internal_stiffness[l])
+            log_file_data=log2numpy_reader(logfile_name,
+                                        filepath,
+                                        thermo_vars)
+
+            temp_out=np.mean(log_file_data[5:,5])
+            temp_comparison=desired_temp-temp_out
+            temp_comparison_list_conv.append(temp_comparison)
+            input_temp_list_conv.append(input_temp)
+            print("Temp comparison", temp_comparison)
+            count+=1
+
+         
+               
+
+            if np.abs(temp_comparison)<tolerance:
+                print("temp controlled")
+                
+                os.system("cp -r "+logfile_name+ " passed_tests/") #not working 
+                os.system("cp -r *"+rand_int+"_"+str(realisation_index_[j])+"*h5 passed_tests/")
+                os.system("cp -r *"+rand_int+"_"+str(realisation_index_[j])+"*dump passed_tests/")
+
+
+
+
+
+
+
+     
+     
+        
 
 
 # %%
-# all in one file for myriad
-
-        
-
+plt.plot(temp_comparison_list_conv,label="temp comp")
+plt.plot(input_temp_list_conv,label="input T")
+plt.axhline(0.05)
+plt.axhline(-0.05)
+plt.legend()
+plt.show()
 # %%

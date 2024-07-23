@@ -76,7 +76,7 @@ print(conv_r_t_coords)
 
 #%% translate shape into chain
 # this works for equilateral triangle 
-number_of_units=3 
+number_of_units=3
 coord_chain=np.zeros((number_of_units,n_side,2,3))
 #s = 2r Sin(180/n)
 side_length=np.abs(2*rad_circle*np.sin(np.pi/n_side))
@@ -96,7 +96,8 @@ for i in range(number_of_units):
         plt.plot(coord_chain[i,j,0,:],coord_chain[i,j,1,:])
 plt.axis('equal')
 plt.plot()
-    
+
+
 
 
 #%% connected at a centre point 

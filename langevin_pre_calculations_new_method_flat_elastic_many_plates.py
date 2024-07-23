@@ -31,7 +31,7 @@ from sim_file_producer_SRD import *
 box_size_bar=100
 
 
-number_of_points=20
+number_of_points=40
 
 
 
@@ -53,10 +53,10 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
 # for running on my computer 
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD/lmp_mpi'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol_rattle'
-
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol_rattle'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
 # abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_eq_b4_shear'
@@ -87,19 +87,19 @@ erate=np.array([1,0.9,0.7,0.5,0.2,0.1,0.09,0.08,
                 0.01,0.0075,0.005,0.0025,
                 0.001,0.00075,0.0005])
 
-# erate=np.array([1,0.8,0.6,0.4,0.2,0.1,0.08,
-#                 0.06,0.04,
-#                 0.03,0.025,
-#                 0.02,0.015,
-#                 0.01,0.005,
-#                 0.001,0.0005])
+erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,
+                0.03,0.025,
+                0.02,0.015,
+                0.01,0.005,
+                0.001,0.00075])
 # erate=np.array([100,50,25,10,5])
 
 i_=0
 j_=number_of_points
 fluid_name='langevinrun'
 bending_stiffness=np.array([500]) # original 50,100,200,400
-bending_stiffness=np.array([10000])
+# bending_stiffness=np.array([10000])
 #internal_stiffness=np.array([60,80,100]) # 20 does nothing 
 def product_constraint_inputs(damp_upper_bound,damp_lower_bound,internal_stiff,initial_damp,n_sets):
       kdamp=internal_stiff*initial_damp
@@ -112,15 +112,11 @@ def product_constraint_inputs(damp_upper_bound,damp_lower_bound,internal_stiff,i
       # fix 
 
 
-# damp_init=0.03633 # based on H20 as reference fluid 
-# damp_init=0.05
-# new set  with fixed product=kdamp
-#internal_stiffness,damp=product_constraint_inputs(0.1,0.01,internal_stiffness_init,damp_init,10)
 
 
-internal_stiffness=np.array([500,2000])
+internal_stiffness=np.array([500,2000,4000])
 
-damp=np.array([0.01,0.035,0.05])
+damp=np.array([0.035,0.05])
 
 
 
@@ -135,21 +131,16 @@ ram_requirement='10G'
 wall_time='48:00:00'
 
 
-np_req=np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]).astype('str')
-
-# inital_temp_multipl=np.array([1.06006728, 0.99582948, 0.98558312, 1.01943334, 1.01784   ,
-#        0.94875864, 0.9455115 , 0.88103351, 0.9308963 , 0.86103214])
 
 
-
-input_temp=np.array([0.75,0.75,
+input_temp=np.array([0.75,0.80,
  0.85,0.9,0.925,0.95,0.95,0.95,0.95,0.95,
-0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975, 
-0.975,0.975,0.975,0.975,0.975])
+0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975])
 
 realisation_index_=[1,2,3]
 realisation_index_=np.arange(0,1000,1)
 timestep_multiplier=0.2
+# timestep_multiplier=0.01
 
 def compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier):
       no_timestep_=(np.round((total_strain/(erate*md_timestep*timestep_multiplier)),decimals=-3)).astype('int')
@@ -164,10 +155,6 @@ if np.any(no_timestep_>2e9):
 
 
 
-# # for bug test
-# number_of_restarts_per_run=np.array([1,1,1,1,1])
-# no_timestep_=np.array([2000,2000,2000,2000,2000])
-# np_req=np.array([14,14,14,14,14]).astype('str')
 
 def folder_check_or_create(filepath,folder):
      os.chdir(filepath)
@@ -231,7 +218,7 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
 
     #for n in range(0,np_req.size):
         #or now just use one realisation 
-    for h in range(damp.size):
+    for h in range(1):
 
         for k in range(erate.size):    
         #for k in range(0,1):   
