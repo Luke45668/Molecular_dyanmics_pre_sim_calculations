@@ -38,7 +38,7 @@ box_size_bar=np.array([23])
 #phi is the incline
 
 
-number_of_points=10 # for bug test , normally 30
+number_of_points=1000 # for bug test , normally 30
 # could put in spencers PRNG 
 
 def producing_random_points_with_theta(number_of_points):
