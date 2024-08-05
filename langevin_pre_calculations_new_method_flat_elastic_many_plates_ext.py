@@ -39,10 +39,10 @@ number_of_points=10
 Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
 # for running on my computer 
-abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD/lmp_mpi'
+abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD_ext/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.langevin_with_hookean_flat_elastic_mol_100_nemd_run'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
@@ -59,7 +59,7 @@ md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 
 
-erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
+erate=np.array([0.2,0.175,0.15,0.125,0.1,0.08,
                 0.06,0.04,
                 0.03,0.025,
                 0.02,0.015,
@@ -69,7 +69,7 @@ erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
 
 i_=0
 j_=number_of_points
-fluid_name='langevinrun'
+fluid_name='langevinext'
 bending_stiffness=np.array([500]) 
 
 internal_stiffness=np.array([50,100])
@@ -87,25 +87,24 @@ wall_time='48:00:00'
 #  0.85,0.9,0.925,0.95,0.95,0.95,0.95,0.95,
 # 0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975])
 
-input_temp=np.array([0.85,0.875,
- 1,1,1,1,1,1,1,1,
+input_temp=np.array([1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
 # need to make this an array for each
 timestep_multiplier=0.2
-#K=100
+
 timestep_multiplier=np.array([
-[0.005,0.005,0.005,0.005,
-0.05,0.05,0.2,0.2,0.2,
-0.2,0.2,0.2,0.2,0.2,0.2,
+[
+0.005,0.005,0.005,0.005,0.005,
+0.05,0.05,0.05,0.05,0.05,0.05,
 0.2,0.2,0.2,0.2,0.2,0.2],
 
-[0.005,0.005,0.05,0.05,
-0.05,0.05,0.2,0.2,0.2,
-0.2,0.2,0.2,0.2,0.2,0.2,
-0.2,0.2,0.2,0.2,0.2,0.2]])
+[
+0.005,0.005,0.005,0.005,0.005,
+0.05,0.05,0.05,0.05,0.05,0.05,
+0.2,0.2,0.2,0.2,0.2,0.2]]) 
 
 
 
