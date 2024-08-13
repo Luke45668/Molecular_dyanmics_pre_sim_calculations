@@ -26,13 +26,13 @@ import scipy.stats
 from datetime import datetime
 from sim_file_producer_SRD import *
 from simulation_production_module import *
-sns.set_palette('icefire')
+
 
 
 box_size_bar=100
 
 
-number_of_points=50
+number_of_points=20
 
 
 
@@ -42,7 +42,7 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.langevin_with_hookean_flat_elastic_mol_100_nemd_run'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.langevin_with_hookean_DB_particle'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
@@ -69,12 +69,12 @@ erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
 
 #new set of erates
 erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
-                0.06,0.04,0.02,0.01,0.005,0])
+                0.06,0.04,0.01,0.005,0])
 
 
 i_=0
 j_=number_of_points
-fluid_name='langevinrun'
+fluid_name='langevinDB'
 bending_stiffness=np.array([500]) 
 
 internal_stiffness=np.array([50,40])
@@ -92,9 +92,9 @@ wall_time='48:00:00'
 #  0.85,0.9,0.925,0.95,0.95,0.95,0.95,0.95,
 # 0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975])
 
-input_temp=np.array([0.8,0.825,0.85,
- 0.875,0.9,0.925,0.95,0.975,1,1,1,
-1,1,1,1,1,1,1,1,1])
+input_temp=np.array([0.775,0.8,0.825,
+ 0.85,0.875,0.9,0.925,0.95,0.975,1,1,
+1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
@@ -105,12 +105,12 @@ timestep_multiplier=np.array([
 [0.005,0.005,0.005,0.005,
 0.005,0.005,0.005,0.005,0.005,
 0.05,0.05,0.05,0.05,0.05,0.05,
-0.05,0.05,0.05,0.05,0.2],
+0.05,0.05,0.05,0.2],
 
 [0.005,0.005,0.005,0.005,
 0.005,0.005,0.005,0.005,0.005,
 0.05,0.05,0.05,0.05,0.05,0.05,
-0.05,0.05,0.05,0.05,0.2]])
+0.05,0.05,0.05,0.2]])
 
 
 
@@ -128,7 +128,7 @@ dump_freq=out_put_freq_calc(no_timestep_,10000)
 thermo_freq=out_put_freq_calc(no_timestep_,10000)
 
 
-np_req=str(8)
+np_req=str(4)
 var_choice_1=erate
 var_choice_2=internal_stiffness
 # individual shear rates 
@@ -168,6 +168,7 @@ sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_tim
                                                     Path_2_generic,
                                                     fluid_name,timestep_multiplier)
         
+
 
 
 
