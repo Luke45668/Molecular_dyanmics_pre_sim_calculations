@@ -43,6 +43,8 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
+
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
@@ -59,7 +61,7 @@ md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 
 
-erate=np.array([0.2,0.175,0.15,0.125,0.1,0.08,
+erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
                 0.06,0.04,
                 0.03,0.025,
                 0.02,0.015,
@@ -67,19 +69,26 @@ erate=np.array([0.2,0.175,0.15,0.125,0.1,0.08,
                 0.001,0.00075,0])
 # erate=np.array([100,50,25,10,5])
 
+#new set of erates
+erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,0.02,0.01,0.005,0])
+
+
 i_=0
 j_=number_of_points
-fluid_name='langevinext'
+fluid_name='langevinextnvt'
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([50,100])
+internal_stiffness=np.array([30,60])
+
+internal_stiffness=np.array([120,240])
 
 damp=np.array([0.035])
 
 
 equilibrium_triangle_side_length=3
 tempdir_req='1G'
-ram_requirement='10G'
+ram_requirement='5G'
 wall_time='48:00:00'
 
 
@@ -87,41 +96,51 @@ wall_time='48:00:00'
 #  0.85,0.9,0.925,0.95,0.95,0.95,0.95,0.95,
 # 0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975])
 
-input_temp=np.array([1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1])
+# input_temp=np.array([0.8,0.825,0.85,
+#  0.875,0.9,0.925,0.95,0.975,1,1,1,
+# 1,1,1,1,1,1,1,1,1])
+
+# no langevin temp
+input_temp=np.array([1,1,1,
+ 1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
 # need to make this an array for each
-timestep_multiplier=0.2
+#timestep_multiplier=0.2
 
 timestep_multiplier=np.array([
-[
-0.005,0.005,0.005,0.005,0.005,
-0.05,0.05,0.05,0.05,0.05,0.05,
-0.2,0.2,0.2,0.2,0.2,0.2],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.0005,0.0005,0.0005,
+0.0005,0.0005,0.005,0.005,0.2],
 
-[
-0.005,0.005,0.005,0.005,0.005,
-0.05,0.05,0.05,0.05,0.05,0.05,
-0.2,0.2,0.2,0.2,0.2,0.2]]) 
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.0005,0.0005,0.0005,
+0.0005,0.0005,0.005,0.005,0.2]])
 
 
 
 # for MYRIAD run
-total_strain=400
+total_strain=60
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
+no_timestep_[:,-1]=10000000
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
-no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
+#no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
 
 # only for equilibrium run 
 
 dump_freq=out_put_freq_calc(no_timestep_,10000)
 thermo_freq=out_put_freq_calc(no_timestep_,10000)
 
+dump_freq=out_put_freq_calc(no_timestep_,1000)
+thermo_freq=out_put_freq_calc(no_timestep_,1000)
 
-np_req=str(16)
+
+np_req=str(8) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
 # individual shear rates 
