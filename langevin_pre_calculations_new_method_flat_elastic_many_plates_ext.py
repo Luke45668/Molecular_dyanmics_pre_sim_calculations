@@ -32,7 +32,7 @@ from simulation_production_module import *
 box_size_bar=100
 
 
-number_of_points=10
+number_of_points=5
 
 
 
@@ -42,7 +42,10 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD_ext/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
+
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
+
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
@@ -77,11 +80,23 @@ erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
 i_=0
 j_=number_of_points
 fluid_name='langevinextnvt'
+fluid_name='DBextnvt'
+#fluid_name='plateextnvt'
+
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([30,60])
+internal_stiffness=np.array([50,100])
 
-internal_stiffness=np.array([120,240])
+# internal_stiffness=np.array([30,60])
+
+# internal_stiffness=np.array([120,240])
+
+#internal_stiffness=np.array([480,960])
+
+#internal_stiffness=np.array([1250,1500])
+
+#internal_stiffness=np.array([3000,6000])
+
 
 damp=np.array([0.035])
 
@@ -133,16 +148,18 @@ if np.any(no_timestep_>2e9):
 
 # only for equilibrium run 
 
-dump_freq=out_put_freq_calc(no_timestep_,10000)
-thermo_freq=out_put_freq_calc(no_timestep_,10000)
+# dump_freq=out_put_freq_calc(no_timestep_,10000)
+# thermo_freq=out_put_freq_calc(no_timestep_,10000)
 
 dump_freq=out_put_freq_calc(no_timestep_,1000)
 thermo_freq=out_put_freq_calc(no_timestep_,1000)
 
 
-np_req=str(8) 
+np_req=str(4) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
+thermal_damp_multiplier=np.array([75,150,300,600,1200])
+#thermal_damp_multiplier=np.array([3000,6000,9000])
 # individual shear rates 
 
 
@@ -178,7 +195,7 @@ sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_tim
                                                     box_size_bar,
                                                     Path_2_shell_scirpts,
                                                     Path_2_generic,
-                                                    fluid_name,timestep_multiplier)
+                                                    fluid_name,timestep_multiplier,thermal_damp_multiplier)
         
 
 

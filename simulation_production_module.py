@@ -1,4 +1,20 @@
 import numpy as np
+import os 
+import datetime
+from sim_file_producer_SRD import *
+import os
+import numpy as np
+import sigfig as sgf
+import matplotlib.pyplot as plt
+import regex as re
+import pandas as pd
+import math as m 
+import sigfig 
+from mpl_toolkits import mplot3d
+from matplotlib.gridspec import GridSpec
+import seaborn as sns
+import math as m
+import scipy.stats
 
 
 def folder_check_or_create(filepath,folder):
@@ -41,7 +57,7 @@ def product_constraint_inputs(damp_upper_bound,damp_lower_bound,internal_stiff,i
 
 
 
-def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
+def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_time_negative_bar,bending_stiffness,damp,input_temp,
                                                          erate,
                                                          equilibrium_triangle_side_length,
                                                          var_choice_1,var_choice_2,internal_stiffness,
@@ -50,7 +66,7 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
                                                          ram_requirement,realisation_index_,VP_ave_freq,
                                                          abs_path_2_lammps_exec,abs_path_2_lammps_script,
                                                          no_timestep_,thermo_freq,dump_freq,md_timestep,
-                                                         i_,j_,box_size_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name,timestep_multiplier):
+                                                         i_,j_,box_size_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name,timestep_multiplier,thermal_damp_multiplier):
     
     os.chdir(Path_2_shell_scirpts)
     META_DATA = str(datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
@@ -59,6 +75,7 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
         str(equilibrium_triangle_side_length)+'_realisations_'+str(j_)+'_box_size_'+\
             str(box_size_bar)+'_bendstiff_'+str(bending_stiffness[0])+\
                 '_intstiff_'+str(internal_stiffness[0])+'_'+str(internal_stiffness[-1])+\
+                    '_tdamprange_'+str(thermal_damp_multiplier[0])+'_'+str(thermal_damp_multiplier[-1])+\
                     '_erate_'+str(var_choice_1[0])+'_'+str(var_choice_1[-1])+'_'+META_DATA
     os.mkdir(simulation_batch_folder)
     sim_batchcode=str(np.random.randint(0, 1000000))
@@ -69,7 +86,9 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
 
     #for n in range(0,np_req.size):
         #or now just use one realisation 
-    for h in range(1):
+    for h in range(thermal_damp_multiplier.size):
+       thermal_damp_multi=thermal_damp_multiplier[h]
+
        for m in range(0,var_choice_2.size): 
              for k in range(erate.size):    
         #for k in range(0,1):   
@@ -81,7 +100,7 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
                                         '_realisation_'+str(j)+'_Bk_'+str(bending_stiffness[0])+'_np_'+str(np_req)+\
                                             '_no_timesteps_'+str(no_timestep_[m,k])+'_intstiff_'+str(var_choice_2[m])+\
                                                 '_eqsl_'+str(equilibrium_triangle_side_length)+'_erate_'+\
-                                                    str(var_choice_1[k])+'_damp_'+str(damp[h])+'_'
+                                                    str(var_choice_1[k])+'_tdamp_'+str(thermal_damp_multi)+'_'
                                     run_code=''
                                 
                                     #print(no_SRD)
@@ -100,8 +119,8 @@ def sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(damp,input_temp,
                                 
 
                                                 
-                                    run_code_individual ="mpirun -np "+np_req+" "+abs_path_2_lammps_exec+' -var timestep_multiplier '+str(timestep_multiplier[m,k])+' -var temp '+str(input_temp[k])+' -var damp '\
-                                        +str(damp[h])+' -var erate_in '+str(erate[k])+' -var equilirbium_triangle_side_length '\
+                                    run_code_individual ="mpirun -np "+np_req+" "+abs_path_2_lammps_exec+' -var tdamp_multi '+str(thermal_damp_multi)+' -var timestep_multiplier '+str(timestep_multiplier[m,k])+' -var temp '+str(input_temp[k])+' -var damp '\
+                                        +str(damp[0])+' -var erate_in '+str(erate[k])+' -var equilirbium_triangle_side_length '\
                                             +str(equilibrium_triangle_side_length)+\
                                     ' -var angle_stiff '+str(bending_stiffness[0])+' -var spring_stiffness '+str(internal_stiffness[m])+\
                                         ' -var fluid_name '+fluid_name +' -var  sim_batchcode '+str(sim_batchcode)+\
