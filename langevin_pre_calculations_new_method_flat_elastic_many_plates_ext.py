@@ -32,7 +32,7 @@ from simulation_production_module import *
 box_size_bar=100
 
 
-number_of_points=5
+number_of_points=10
 
 
 
@@ -77,6 +77,11 @@ erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
                 0.06,0.04,0.02,0.01,0.005,0])
 
 
+
+# for dumbell run 
+erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,0.02,0.01,0.005])
+
 i_=0
 j_=number_of_points
 fluid_name='langevinextnvt'
@@ -85,7 +90,7 @@ fluid_name='DBextnvt'
 
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([50,100])
+internal_stiffness=np.array([50,500])
 
 # internal_stiffness=np.array([30,60])
 
@@ -118,13 +123,14 @@ wall_time='48:00:00'
 # no langevin temp
 input_temp=np.array([1,1,1,
  1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1])
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
 # need to make this an array for each
 #timestep_multiplier=0.2
 
+# for flat elastic 
 timestep_multiplier=np.array([
 [0.00005,0.00005,0.00005,0.00005,
 0.00005,0.00005,0.00005,0.00005,0.00005,
@@ -136,12 +142,31 @@ timestep_multiplier=np.array([
 0.00005,0.00005,0.00005,0.0005,0.0005,0.0005,
 0.0005,0.0005,0.005,0.005,0.2]])
 
+# for dumbell test 
+timestep_multiplier=np.array([
+[0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+
+[0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005]])*2
+
+thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
+100,100,100,100,250,250])/10
+
+# thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
+# 100,100,100,100,150,150])/10
 
 
 # for MYRIAD run
-total_strain=60
+total_strain=125
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
-no_timestep_[:,-1]=10000000
+#no_timestep_[:,-1]=10000000
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
 #no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
@@ -158,14 +183,18 @@ thermo_freq=out_put_freq_calc(no_timestep_,1000)
 np_req=str(4) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
-thermal_damp_multiplier=np.array([75,150,300,600,1200])
-#thermal_damp_multiplier=np.array([3000,6000,9000])
+thermal_damp_multiplier=np.array([5,7.5,10,12.5,25])
+#thermal_damp_multiplier=np.array([35,50,75,100])
+thermal_damp_multiplier=np.array([5,12.5,25,50,75,100,125,150,200,400]) # for
+thermal_damp_multiplier=np.array([0.05,0.5,5,50,100,250,500])
+thermal_damp_multiplier=np.array([25,50,100,250,500,750,1000])
+thermal_damp_multiplier=np.array([250,500,750,1000])
 # individual shear rates 
 
 
 # %%
 # all in one file for myriad
-
+# run tests with various sets of t damp
     
 sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_time_negative_bar,
                                                     bending_stiffness,damp,
@@ -199,7 +228,18 @@ sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_tim
         
 
 
+#%% fix a single t damp to each shear rate
 
+sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file_var_damp(SRD_MD_ratio_,collision_time_negative_bar,bending_stiffness,damp,input_temp,
+                                                         erate,
+                                                         equilibrium_triangle_side_length,
+                                                         var_choice_1,var_choice_2,internal_stiffness,
+                                                         data_transfer_instructions,extra_code,wd_path,
+                                                         np_req,num_task_req,tempdir_req,wall_time,
+                                                         ram_requirement,realisation_index_,VP_ave_freq,
+                                                         abs_path_2_lammps_exec,abs_path_2_lammps_script,
+                                                         no_timestep_,thermo_freq,dump_freq,md_timestep,
+                                                         i_,j_,box_size_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name,timestep_multiplier,thermal_damp_multiplier)
 
 
 # %% producing files in simulation test folder only for equilibrium 
