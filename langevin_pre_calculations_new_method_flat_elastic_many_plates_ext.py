@@ -82,6 +82,9 @@ erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
 erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
                 0.06,0.04,0.02,0.01,0.005])
 
+erate=np.array([0.5,0.45,0.4,0.375,0.3725,0.37,0.365,0.36,0.355,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,0.02,0.01,0.005])
+
 i_=0
 j_=number_of_points
 fluid_name='langevinextnvt'
@@ -90,7 +93,9 @@ fluid_name='DBextnvt'
 
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([50,500])
+internal_stiffness=np.array([25,50])
+
+internal_stiffness=np.array([100,200])
 
 # internal_stiffness=np.array([30,60])
 
@@ -123,7 +128,7 @@ wall_time='48:00:00'
 # no langevin temp
 input_temp=np.array([1,1,1,
  1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
@@ -144,17 +149,17 @@ timestep_multiplier=np.array([
 
 # for dumbell test 
 timestep_multiplier=np.array([
-[0.00005,0.00005,0.00005,
+[0.00005,0.00005,0.00005,0.00005,
 0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
 0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
 0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
 0.005],
 
-[0.00005,0.00005,0.00005,
+[0.00005,0.00005,0.00005,0.00005,
 0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
 0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
 0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
-0.005]])*2
+0.005]])*4
 
 thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 100,100,100,100,250,250])/10
@@ -164,7 +169,7 @@ thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 
 
 # for MYRIAD run
-total_strain=125
+total_strain=100
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
 #no_timestep_[:,-1]=10000000
 if np.any(no_timestep_>2e9):
@@ -188,8 +193,40 @@ thermal_damp_multiplier=np.array([5,7.5,10,12.5,25])
 thermal_damp_multiplier=np.array([5,12.5,25,50,75,100,125,150,200,400]) # for
 thermal_damp_multiplier=np.array([0.05,0.5,5,50,100,250,500])
 thermal_damp_multiplier=np.array([25,50,100,250,500,750,1000])
-thermal_damp_multiplier=np.array([250,500,750,1000])
+thermal_damp_multiplier=np.array([750,1000,1500,2000])
+
 # individual shear rates 
+# need to flip to match the shear rates
+                                  #0.005,0.01,0.02,0.04,0.06,0.08,0.1,
+# tuned for K=50
+thermal_damp_multiplier=np.array([750,  750,  750,  650,  550,  450,  450,  450,  500,  500,  750,
+        750, 1000, 1500,  800,  550,  550,  600,  600,  600,  750,  750,
+       2500, 3000])*0.5  # made timestep 2x bigger , so make damp half to have equivalent damping effect
+# damps with strain rate choice
+# 3000,#0.005
+# 2500,#0.01
+# 750,#0.02
+# 750,# 0.04
+# 600,# 0.06
+# 600,# 0.08
+# 600,#0.1
+# 550,#0.125
+# 550,#0.15
+# 800,#0.175
+# 1500,#0.2
+# 1000,#0.3
+# 750,#0.325
+# 750,#0.3375
+# 500,#0.35
+# 500,#0.355
+# 450,#0.36
+# 450,#0.365
+# 450,#0.37
+# 550,#0.3275
+# 650,#0.375
+# 750,#0.4
+# 750,#0.45
+# 750#0.5
 
 
 # %%

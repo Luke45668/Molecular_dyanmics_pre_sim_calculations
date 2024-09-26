@@ -79,6 +79,7 @@ bending_stiffness=np.array([500])
 
 internal_stiffness=np.array([50,40])
 internal_stiffness=np.array([10,5])
+internal_stiffness=np.array([15,20])
 
 damp=np.array([0.035])
 
@@ -114,7 +115,7 @@ realisation_index_=np.arange(0,1000,1)
 # 0.05,0.05,0.05,0.05,0.05,0.05,
 # 0.05,0.05,0.05,0.05,0.2]])
 
-#K=10 
+#K=15,20 
 timestep_multiplier=np.array([
 [0.0005,0.0005,0.0005,0.0005,
 0.0005,0.0005,0.0005,0.0005,0.0005,
@@ -124,7 +125,7 @@ timestep_multiplier=np.array([
 [0.0005,0.0005,0.0005,0.0005,
 0.0005,0.0005,0.0005,0.0005,0.0005,
 0.005,0.005,0.005,0.005,0.005,0.005,
-0.005,0.005,0.005,0.005,0.2]])
+0.005,0.005,0.005,0.005,0.4]])/2
 
 
 
@@ -152,7 +153,7 @@ var_choice_2=internal_stiffness
 # all in one file for myriad
 
     
-sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_time_negative_bar,
+sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file_langevin(SRD_MD_ratio_,collision_time_negative_bar,
                                                     bending_stiffness,damp,
                                                     input_temp,
                                                     erate,

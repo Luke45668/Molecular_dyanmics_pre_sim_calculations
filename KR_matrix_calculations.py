@@ -4,6 +4,7 @@ import numpy as np
 M=np.array([[2,-1,0],
         [-1,1,0],
         [0,0,1]])
+determinant= np.linalg.det(M)
 
 Eigennumbers=np.linalg.eig(M)
 # %%
