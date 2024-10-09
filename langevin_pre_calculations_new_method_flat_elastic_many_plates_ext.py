@@ -55,7 +55,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
-wd_path='/home/ucahlrl/Scratch/output/'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/db_runs/cfg_run/'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -79,11 +79,12 @@ erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
 
 
 # for dumbell run 
-erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
-                0.06,0.04,0.02,0.01,0.005])
+# erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+#                 0.06,0.04,0.02,0.01,0.005])
 
-erate=np.array([0.5,0.45,0.4,0.375,0.3725,0.37,0.365,0.36,0.355,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
-                0.06,0.04,0.02,0.01,0.005])
+# erate=np.array([0.5,0.45,0.4,0.375,0.3725,0.37,0.365,0.36,0.355,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+#                 0.06,0.04,0.02,0.01,0.005])
+erate=np.linspace(0.5,0.005,24)
 
 i_=0
 j_=number_of_points
@@ -95,7 +96,7 @@ bending_stiffness=np.array([500])
 
 internal_stiffness=np.array([25,50])
 
-internal_stiffness=np.array([100,200])
+#internal_stiffness=np.array([100,200])
 
 # internal_stiffness=np.array([30,60])
 
@@ -202,6 +203,7 @@ thermal_damp_multiplier=np.array([750,1000,1500,2000])
 thermal_damp_multiplier=np.array([750,  750,  750,  650,  550,  450,  450,  450,  500,  500,  750,
         750, 1000, 1500,  800,  550,  550,  600,  600,  600,  750,  750,
        2500, 3000])*0.5  # made timestep 2x bigger , so make damp half to have equivalent damping effect
+thermal_damp_multiplier=np.repeat(250,24)
 # damps with strain rate choice
 # 3000,#0.005
 # 2500,#0.01

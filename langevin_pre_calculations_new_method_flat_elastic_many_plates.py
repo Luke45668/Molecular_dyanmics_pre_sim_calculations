@@ -78,8 +78,8 @@ fluid_name='langevinrun'
 bending_stiffness=np.array([500]) 
 
 internal_stiffness=np.array([50,40])
-internal_stiffness=np.array([10,5])
-internal_stiffness=np.array([15,20])
+internal_stiffness=np.array([90,120])
+#internal_stiffness=np.array([15,20])
 
 damp=np.array([0.035])
 
@@ -120,7 +120,7 @@ timestep_multiplier=np.array([
 [0.0005,0.0005,0.0005,0.0005,
 0.0005,0.0005,0.0005,0.0005,0.0005,
 0.005,0.005,0.005,0.005,0.005,0.005,
-0.005,0.005,0.005,0.005,0.2],
+0.005,0.005,0.005,0.005,0.4],
 
 [0.0005,0.0005,0.0005,0.0005,
 0.0005,0.0005,0.0005,0.0005,0.0005,
