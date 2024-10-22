@@ -80,6 +80,8 @@ bending_stiffness=np.array([500])
 internal_stiffness=np.array([50,40])
 internal_stiffness=np.array([90,120])
 #internal_stiffness=np.array([15,20])
+internal_stiffness=np.array([30,60])
+
 
 damp=np.array([0.035])
 

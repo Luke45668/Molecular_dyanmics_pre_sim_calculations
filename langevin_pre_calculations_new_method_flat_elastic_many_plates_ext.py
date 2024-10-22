@@ -44,7 +44,7 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
 
@@ -55,7 +55,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/db_runs/cfg_run/'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -90,11 +90,11 @@ i_=0
 j_=number_of_points
 fluid_name='langevinextnvt'
 fluid_name='DBextnvt'
-#fluid_name='plateextnvt'
+fluid_name='plateextnvt'
 
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([25,50])
+internal_stiffness=np.array([25,50,100,150,300,600,1200])
 
 #internal_stiffness=np.array([100,200])
 
@@ -162,6 +162,44 @@ timestep_multiplier=np.array([
 0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
 0.005]])*4
 
+# for plate test 
+timestep_multiplier=np.array([
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005],
+[0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
+0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
+0.005]])*4
+
 thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 100,100,100,100,250,250])/10
 
@@ -170,7 +208,7 @@ thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 
 
 # for MYRIAD run
-total_strain=100
+total_strain=200
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
 #no_timestep_[:,-1]=10000000
 if np.any(no_timestep_>2e9):
@@ -186,7 +224,7 @@ dump_freq=out_put_freq_calc(no_timestep_,1000)
 thermo_freq=out_put_freq_calc(no_timestep_,1000)
 
 
-np_req=str(4) 
+np_req=str(8) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
 thermal_damp_multiplier=np.array([5,7.5,10,12.5,25])
