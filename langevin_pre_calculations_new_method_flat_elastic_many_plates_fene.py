@@ -26,28 +26,23 @@ import scipy.stats
 from datetime import datetime
 from sim_file_producer_SRD import *
 from simulation_production_module import *
-
+sns.set_palette('icefire')
 
 
 box_size_bar=100
 
 
-number_of_points=10
+number_of_points=50
 
 
 
 Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 
 # for running on my computer 
-abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD_ext/lmp_mpi'
+abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
-
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
-
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
-
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.langevin_with_fene_flat_elastic_particle_fene_mol'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_pentagon_mol_rattle'
 #for running on myriad 
 # abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_serial/lmp'
@@ -55,8 +50,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep'
+wd_path='/home/ucahlrl/Scratch/output/'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -78,37 +72,15 @@ erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
                 0.06,0.04,0.02,0.01,0.005,0])
 
 
-
-# for dumbell run 
-# erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
-#                 0.06,0.04,0.02,0.01,0.005])
-
-# erate=np.array([0.5,0.45,0.4,0.375,0.3725,0.37,0.365,0.36,0.355,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
-#                 0.06,0.04,0.02,0.01,0.005])
-erate=np.linspace(0.5,0.005,24)
-
 i_=0
 j_=number_of_points
-fluid_name='langevinextnvt'
-fluid_name='DBextnvt'
-fluid_name='plateextnvt'
-
+fluid_name='langevinfene'
 bending_stiffness=np.array([500]) 
 
-internal_stiffness=np.array([100,150,300,600])
-internal_stiffness=np.array([20,30,45,60,90])
-
-#internal_stiffness=np.array([100,200])
-
-# internal_stiffness=np.array([30,60])
-
-# internal_stiffness=np.array([120,240])
-
-#internal_stiffness=np.array([480,960])
-
-#internal_stiffness=np.array([1250,1500])
-
-#internal_stiffness=np.array([3000,6000])
+internal_stiffness=np.array([50,40])
+internal_stiffness=np.array([90,120])
+#internal_stiffness=np.array([15,20])
+internal_stiffness=np.array([1,10])
 
 
 damp=np.array([0.035])
@@ -124,110 +96,66 @@ wall_time='48:00:00'
 #  0.85,0.9,0.925,0.95,0.95,0.95,0.95,0.95,
 # 0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975,0.975])
 
-# input_temp=np.array([0.8,0.825,0.85,
-#  0.875,0.9,0.925,0.95,0.975,1,1,1,
-# 1,1,1,1,1,1,1,1,1])
-
-# no langevin temp
-input_temp=np.array([1,1,1,
- 1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
+input_temp=np.array([0.8,0.825,0.85,
+ 0.875,0.9,0.925,0.95,0.975,1,1,1,
+1,1,1,1,1,1,1,1,1])
 
 
 realisation_index_=np.arange(0,1000,1)
 # need to make this an array for each
 #timestep_multiplier=0.2
 
-# for flat elastic 
+#K=30,60
+# timestep_multiplier=np.array([
+# [0.005,0.005,0.005,0.005,
+# 0.005,0.005,0.005,0.005,0.005,
+# 0.05,0.05,0.05,0.05,0.05,0.05,
+# 0.05,0.05,0.05,0.05,0.2],
+
+# [0.005,0.005,0.005,0.005,
+# 0.005,0.005,0.005,0.005,0.005,
+# 0.05,0.05,0.05,0.05,0.05,0.05,
+# 0.05,0.05,0.05,0.05,0.2]])
+
+#K=15,20 
 timestep_multiplier=np.array([
-[0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.0005,0.0005,0.0005,
-0.0005,0.0005,0.005,0.005,0.2],
+[0.0005,0.0005,0.0005,0.0005,
+0.0005,0.0005,0.0005,0.0005,0.0005,
+0.005,0.005,0.005,0.005,0.005,0.005,
+0.005,0.005,0.005,0.005,0.04],
 
-[0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.0005,0.0005,0.0005,
-0.0005,0.0005,0.005,0.005,0.2]])
+[0.0005,0.0005,0.0005,0.0005,
+0.0005,0.0005,0.0005,0.0005,0.0005,
+0.005,0.005,0.005,0.005,0.005,0.005,
+0.005,0.005,0.005,0.005,0.04]])/2
 
-# for dumbell test 
-timestep_multiplier=np.array([
-[0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
-0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
-0.005],
 
-[0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
-0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,0.00005,
-0.0005,0.0005,0.0005,0.0005,0.0005,0.005,
-0.005]])*4
 
-# for plate test 
-timestep_multiplier=np.array([[3.94351157e-05, 4.12088897e-05, 4.31497461e-05, 4.52824594e-05,
-       4.76369570e-05, 5.02497320e-05, 5.31657481e-05, 5.64410493e-05,
-       6.01463967e-05, 6.43724388e-05, 6.92372261e-05, 7.48974122e-05,
-       8.15654372e-05, 8.95367880e-05, 9.92349740e-05, 1.11289284e-04,
-       1.26677048e-04,0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
-       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
-       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
-       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
-       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
-        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ]])
-
-thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
-100,100,100,100,250,250])/10
-
-# thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
-# 100,100,100,100,150,150])/10
-total_strain=100
-def min_timestep_multi(total_strain,erate,md_timestep):
-    
-    min_multi=total_strain/(erate*(2e9-1000)*md_timestep)
-
-    return min_multi
-
-min_multi=min_timestep_multi(total_strain,erate,md_timestep)
 # for MYRIAD run
-min_multi=np.tile(min_multi,(internal_stiffness.size,1))
-timestep_multiplier=min_multi
-no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,min_multi)
-#no_timestep_[:,-1]=10000000
+total_strain=100
+no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
+no_timestep_[:,-1]=10000000 
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
-#no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
+#make equilibrium 10 mil steps 
 
 # only for equilibrium run 
 
-# dump_freq=out_put_freq_calc(no_timestep_,10000)
-# thermo_freq=out_put_freq_calc(no_timestep_,10000)
-
-dump_freq=out_put_freq_calc(no_timestep_,1000)
-thermo_freq=out_put_freq_calc(no_timestep_,1000)
+dump_freq=out_put_freq_calc(no_timestep_,10000)
+thermo_freq=out_put_freq_calc(no_timestep_,10000)
 
 
-np_req=str(8) 
+np_req=str(8)
 var_choice_1=erate
 var_choice_2=internal_stiffness
+# individual shear rates 
 
-thermal_damp_multiplier=np.repeat(250,24)
-
-#NOTE: for next set of runs change in.nvt_uef so that stretch is along z axis 
-#NOTE: comms cut off is only 6, could push it up to 10 at some cost 
 
 # %%
 # all in one file for myriad
-# run tests with various sets of t damp
+
     
-sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_time_negative_bar,
+sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file_langevin(SRD_MD_ratio_,collision_time_negative_bar,
                                                     bending_stiffness,damp,
                                                     input_temp,
                                                     erate,
@@ -255,22 +183,11 @@ sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file(SRD_MD_ratio_,collision_tim
                                                     box_size_bar,
                                                     Path_2_shell_scirpts,
                                                     Path_2_generic,
-                                                    fluid_name,timestep_multiplier,thermal_damp_multiplier)
+                                                    fluid_name,timestep_multiplier)
         
 
 
-#%% fix a single t damp to each shear rate
 
-sim_file_prod_flat_elastic_MYRIAD_all_erate_one_file_var_damp(SRD_MD_ratio_,collision_time_negative_bar,bending_stiffness,damp,input_temp,
-                                                         erate,
-                                                         equilibrium_triangle_side_length,
-                                                         var_choice_1,var_choice_2,internal_stiffness,
-                                                         data_transfer_instructions,extra_code,wd_path,
-                                                         np_req,num_task_req,tempdir_req,wall_time,
-                                                         ram_requirement,realisation_index_,VP_ave_freq,
-                                                         abs_path_2_lammps_exec,abs_path_2_lammps_script,
-                                                         no_timestep_,thermo_freq,dump_freq,md_timestep,
-                                                         i_,j_,box_size_bar,Path_2_shell_scirpts,Path_2_generic,fluid_name,timestep_multiplier,thermal_damp_multiplier)
 
 
 # %% producing files in simulation test folder only for equilibrium 
