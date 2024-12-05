@@ -43,7 +43,7 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
 abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
-
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
@@ -56,6 +56,7 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax'
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep'
 num_task_req=''
 data_transfer_instructions=''
@@ -89,14 +90,14 @@ erate=np.linspace(0.5,0.005,24)
 
 i_=0
 j_=number_of_points
-fluid_name='langevinextnvt'
-fluid_name='DBextnvt'
 fluid_name='plateextnvt'
+# fluid_name='DBextnvt'
+# fluid_name='plateextnvtbiax'
 
 bending_stiffness=np.array([500]) 
 
 internal_stiffness=np.array([100,150,300,600])
-internal_stiffness=np.array([20,30,45,60,90])
+internal_stiffness=np.array([30,60,100,150,300,600])
 
 #internal_stiffness=np.array([100,200])
 
@@ -219,6 +220,8 @@ var_choice_1=erate
 var_choice_2=internal_stiffness
 
 thermal_damp_multiplier=np.repeat(250,24)
+thermal_damp_time=timestep_multiplier*md_timestep*thermal_damp_multiplier
+timestep=timestep_multiplier*md_timestep
 
 #NOTE: for next set of runs change in.nvt_uef so that stretch is along z axis 
 #NOTE: comms cut off is only 6, could push it up to 10 at some cost 
