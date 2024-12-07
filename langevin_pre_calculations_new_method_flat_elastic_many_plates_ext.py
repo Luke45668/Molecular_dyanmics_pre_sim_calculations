@@ -42,8 +42,11 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD_ext/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_novisc'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax_novisc'
+
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.brownian_uef_flat_elastic_particles_biax'
@@ -56,8 +59,10 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep'
+# wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax'
+# wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax_novisc'
+#wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_novisc'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -92,7 +97,7 @@ i_=0
 j_=number_of_points
 fluid_name='plateextnvt'
 # fluid_name='DBextnvt'
-# fluid_name='plateextnvtbiax'
+fluid_name='plateextnvtbiax'
 
 bending_stiffness=np.array([500]) 
 

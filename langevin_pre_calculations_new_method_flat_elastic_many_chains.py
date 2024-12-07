@@ -126,32 +126,62 @@ timestep_multiplier=np.array(
 0.005,0.005,0.005,0.005,0.04])/2
 
 
-timestep_multiplier=np.array([
-[0.000125, 0.000125, 0.000125, 0.000125, 0.000125, 0.000125,
-       0.000125, 0.000125, 0.000125, 0.00125 , 0.00125 , 0.00125 ,
-       0.00125 , 0.00125 , 0.00125 , 0.00125,0.0025 , 0.0025 , 0.0025 , 0.02 ],
-     [0.000125, 0.000125, 0.000125, 0.000125, 0.000125, 0.000125,
-       0.000125, 0.000125, 0.000125, 0.00125 , 0.00125 , 0.00125 ,
-       0.00125 , 0.00125 , 0.00125 , 0.00125,0.0025 , 0.0025 , 0.0025 , 0.02 ]  ])
+timestep_multiplier=np.array([[3.94351157e-05, 4.12088897e-05, 4.31497461e-05, 4.52824594e-05,
+       4.76369570e-05, 5.02497320e-05, 5.31657481e-05, 5.64410493e-05,
+       6.01463967e-05, 6.43724388e-05, 6.92372261e-05, 7.48974122e-05,
+       8.15654372e-05, 8.95367880e-05, 9.92349740e-05, 1.11289284e-04,
+       1.26677048e-04,0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
+       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
+       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
+       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ],
+       [0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002, 0.0002,
+        0.0002, 0.002 , 0.002 , 0.002 , 0.002 , 0.002 , 0.02  , 0.02  ]])
 
-# for MYRIAD run
+thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
+100,100,100,100,250,250])/10
+
+# thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
+# 100,100,100,100,150,150])/10
 total_strain=100
-no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,timestep_multiplier)
-no_timestep_[:,-1]=10000000 
+def min_timestep_multi(total_strain,erate,md_timestep):
+    
+    min_multi=total_strain/(erate*(2e9-1000)*md_timestep)
+
+    return min_multi
+
+min_multi=min_timestep_multi(total_strain,erate,md_timestep)
+# for MYRIAD run
+min_multi=np.tile(min_multi,(internal_stiffness.size,1))
+
+timestep_multiplier=min_multi
+# for equilibration run 
+timestep_multiplier[:,-1]=0.2
+
+no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,min_multi)
+#for equilibrium run 
+no_timestep_[:,-1]=10000000
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
-#make equilibrium 10 mil steps 
-
-# only for equilibrium run 
-
-dump_freq=out_put_freq_calc(no_timestep_,10000)
-thermo_freq=out_put_freq_calc(no_timestep_,10000)
+ 
 
 
-np_req=str(8)
+dump_freq=out_put_freq_calc(no_timestep_,1000)
+thermo_freq=out_put_freq_calc(no_timestep_,1000)
+
+
+np_req=str(8) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
-# individual shear rates 
+
+
+timestep=timestep_multiplier*md_timestep
 
 
 # %%
