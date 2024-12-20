@@ -44,8 +44,8 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_novisc'
-
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_novisc'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax_novisc'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
@@ -59,9 +59,10 @@ abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.
 Path_2_generic='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n module load gcc-libs/10.2.0 \n module load compilers/intel/2022.2 \n module load mpi/intel/2019/update6/intel \n  module load hdf/5-1.12.3-impi/intel-2022'
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
-
-
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_novisc'
+# wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax'
+# wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_biax_novisc'
+#wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_novisc'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -70,20 +71,39 @@ md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 
 
+erate=np.array([1,0.8,0.6,0.4,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,
+                0.03,0.025,
+                0.02,0.015,
+                0.01,0.005,
+                0.001,0.00075,0])
+# erate=np.array([100,50,25,10,5])
+
+#new set of erates
+erate=np.array([1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+                0.06,0.04,0.02,0.01,0.005,0])
+
+
+
+# for dumbell run 
+# erate=np.array([0.7,0.6,0.55,0.5,0.45,0.4,0.375,0.3675,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+#                 0.06,0.04,0.02,0.01,0.005])
+
+# erate=np.array([0.5,0.45,0.4,0.375,0.3725,0.37,0.365,0.36,0.355,0.35,0.3375 ,0.325,0.3,0.2,0.175,0.15,0.125,0.1,0.08,
+#                 0.06,0.04,0.02,0.01,0.005])
 erate=np.linspace(1,0.005,24)
 
 i_=0
 j_=number_of_points
-fluid_name='plateextnvt'
-# fluid_name='DBextnvt'
 
+fluid_name='plateextnvtbiax'
 
 bending_stiffness=np.array([500]) 
 
 internal_stiffness=np.array([100,150,300,600])
 internal_stiffness=np.array([30,60,100,150,300,600])
-internal_stiffness=np.array([5,7.5,10,15,20,30])
 internal_stiffness=np.array([5,15,30,60,90,120])
+
 #internal_stiffness=np.array([100,200])
 
 # internal_stiffness=np.array([30,60])
