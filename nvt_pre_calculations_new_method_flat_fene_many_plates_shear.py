@@ -44,7 +44,7 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_novisc'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_fene_flat_elastic_particle_fene_mol'
 
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
@@ -61,7 +61,7 @@ extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n 
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
 
 
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_run_100_small_tstep_novisc'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_run_100_small_tstep_novisc'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -71,12 +71,12 @@ collision_time_negative_bar=0.05071624521210362
 
 
 erate=np.linspace(1,0.005,24)
-erate=np.logspace(-5,-0.25,24) # to see the behaviour as the strain rate tends to 0
 
 i_=0
 j_=number_of_points
-fluid_name='plateextnvt'
-# fluid_name='DBextnvt'
+
+fluid_name='plateshearnvt'
+
 
 
 bending_stiffness=np.array([500]) 
