@@ -32,7 +32,7 @@ from simulation_production_module import *
 box_size_bar=100
 
 
-number_of_points=20
+number_of_points=10
 
 
 
@@ -61,7 +61,7 @@ extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n 
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
 
 
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_run_100_small_tstep_novisc'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_chain_run'
 num_task_req=''
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
@@ -70,7 +70,7 @@ md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 
 
-erate=np.linspace(1,0.005,24)
+erate=np.linspace(1,0,24)
 
 i_=0
 j_=number_of_points
@@ -84,7 +84,7 @@ bending_stiffness=np.array([500])
 internal_stiffness=np.array([100,150,300,600])
 internal_stiffness=np.array([30,60,100,150,300,600])
 internal_stiffness=np.array([5,7.5,10,15,20,30])
-internal_stiffness=np.array([5,15,30,60,90,120])
+internal_stiffness=np.array([30,60,120])
 #internal_stiffness=np.array([100,200])
 
 # internal_stiffness=np.array([30,60])
@@ -175,7 +175,7 @@ thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 
 # thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
 # 100,100,100,100,150,150])/10
-total_strain=100
+total_strain=200
 def min_timestep_multi(total_strain,erate,md_timestep):
     
     min_multi=total_strain/(erate*(2e9-1000)*md_timestep)
@@ -186,8 +186,9 @@ min_multi=min_timestep_multi(total_strain,erate,md_timestep)
 # for MYRIAD run
 min_multi=np.tile(min_multi,(internal_stiffness.size,1))
 timestep_multiplier=min_multi
+timestep_multiplier[:,-1]=timestep_multiplier[:,-2]
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,min_multi)
-#no_timestep_[:,-1]=10000000
+no_timestep_[:,-1]=1999999000
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
 #no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
