@@ -33,6 +33,7 @@ box_size_bar=100
 
 
 number_of_points=10
+n_shear_points=5
 
 
 
@@ -44,8 +45,13 @@ abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/buil
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run'
-
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_45'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_30'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_15'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_5'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_10'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_60'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_70'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
@@ -62,8 +68,12 @@ wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
 
 
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_run_100_small_tstep_novisc'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_150_small_tstep_novisc_tdamp_250'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_250_tdamp_250_tchain_45'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_250_tdamp_250_tchain_high_shear_rates_run_2'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_500_tdamp_250_tchain_high_shear_rates'
+
 num_task_req=''
+
 data_transfer_instructions=''
 SRD_MD_ratio_ = 10
 VP_ave_freq=10000
@@ -71,8 +81,21 @@ md_timestep=0.005071624521210362
 collision_time_negative_bar=0.05071624521210362
 
 
-erate=np.linspace(1,0.005,24)
-erate=np.linspace(2,0,24)
+
+erate=np.linspace(0,0.035,n_shear_points)# tchain 15, 10 points
+#erate=np.linspace(0.07,1.335,n_shear_points) #tchain 15, 10 points 
+erate=np.linspace(1.345,1.395,n_shear_points) # tchain 60, 10 points 
+#erate=np.linspace(1.4,1.55, n_shear_points) # tchain 30 , 10 points 
+
+combined_erate=np.array([0.        , 0.00388889, 0.00777778, 0.01166667, 0.01555556,
+       0.01944444, 0.02333333, 0.02722222, 0.03111111, 0.035  ,0.07      , 0.13894737, 0.20789474, 0.27684211, 0.34578947,
+        0.41473684, 0.48368421, 0.55263158, 0.62157895, 0.69052632,
+        0.75947368, 0.82842105, 0.89736842, 0.96631579, 1.03526316,
+        1.10421053, 1.17315789, 1.24210526, 1.31105263, 1.38,1.4  , 1.42222222, 1.44444444, 1.46666667, 1.48888889,
+        1.51111111, 1.53333333, 1.55555556, 1.57777778, 1.6 ])
+# erate=np.array([1.34      , 1.34555556, 1.35111111, 1.35666667, 1.36222222,
+#        1.36777778, 1.37333333, 1.37888889, 1.38444444, 1.39,1.4       , 1.44444444, 1.48888889, 1.53333333, 1.57777778,
+#        1.62222222, 1.66666667, 1.71111111, 1.75555556, 1.8  ])
 
 i_=0
 j_=number_of_points
@@ -87,7 +110,7 @@ internal_stiffness=np.array([100,150,300,600])
 internal_stiffness=np.array([30,60,100,150,300,600])
 internal_stiffness=np.array([5,7.5,10,15,20,30])
 internal_stiffness=np.array([5,15,30,60,90,120])
-internal_stiffness=np.array([15,60,120])
+internal_stiffness=np.array([60,120])
 #internal_stiffness=np.array([100,200])
 
 # internal_stiffness=np.array([30,60])
@@ -119,9 +142,7 @@ wall_time='48:00:00'
 # 1,1,1,1,1,1,1,1,1])
 
 # no langevin temp
-input_temp=np.array([1,1,1,
- 1,1,1,1,1,1,1,1,
-1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])
+input_temp=np.ones(n_shear_points).astype('int')
 
 
 realisation_index_=np.arange(0,1000,1)
@@ -178,7 +199,7 @@ thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 
 # thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
 # 100,100,100,100,150,150])/10
-total_strain=150
+total_strain=500
 def min_timestep_multi(total_strain,erate,md_timestep):
     
     min_multi=total_strain/(erate*(2e9-1000)*md_timestep)
@@ -189,9 +210,14 @@ min_multi=min_timestep_multi(total_strain,erate,md_timestep)
 # for MYRIAD run
 min_multi=np.tile(min_multi,(internal_stiffness.size,1))
 timestep_multiplier=min_multi
-timestep_multiplier[:,-1]=timestep_multiplier[:,-2]
+if erate[0]==0:
+   timestep_multiplier[:,0]=timestep_multiplier[:,1]
+   print("erate zero adjusted for timestep computation ")
+
+
 no_timestep_=compute_timesteps_for_strain(total_strain,erate,md_timestep,min_multi)
-no_timestep_[:,-1]=1999999000
+if np.any(erate==0):
+   no_timestep_[:,0]=1999999000
 if np.any(no_timestep_>2e9):
      print("error! too many timesteps, must be less than 2e9")
 #no_timestep_[:,-1]=10000000 #make equilibrium 10 mil steps 
@@ -205,15 +231,15 @@ dump_freq=out_put_freq_calc(no_timestep_,1000)
 thermo_freq=out_put_freq_calc(no_timestep_,1000)
 
 
-np_req=str(8) 
+np_req=str(16) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
 
-thermal_damp_multiplier=np.repeat(250,24)
+thermal_damp_multiplier=np.repeat(250,n_shear_points)
 #thermal_damp_multiplier=np.repeat(100,24)
-# thermal_damp_multiplier=np.repeat(50,24)
-thermal_damp_time=timestep_multiplier*md_timestep*thermal_damp_multiplier
-timestep=timestep_multiplier*md_timestep
+#thermal_damp_multiplier=np.repeat(50,24)
+# thermal_damp_time=timestep_multiplier*md_timestep*thermal_damp_multiplier
+# timestep=timestep_multiplier*md_timestep
 
 #NOTE: for next set of runs change in.nvt_uef so that stretch is along z axis 
 #NOTE: comms cut off is only 6, could push it up to 10 at some cost 

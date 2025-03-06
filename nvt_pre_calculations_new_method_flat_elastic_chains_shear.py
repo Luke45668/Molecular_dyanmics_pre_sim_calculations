@@ -175,7 +175,7 @@ thermal_damp_multiplier=np.array([25,25,25,25,25,25,25,100,100,100,100,100,
 
 # thermal_damp_multiplier=np.array([100,100,100,100,100,100,100,100,100,100,100,100,
 # 100,100,100,100,150,150])/10
-total_strain=200
+total_strain=400
 def min_timestep_multi(total_strain,erate,md_timestep):
     
     min_multi=total_strain/(erate*(2e9-1000)*md_timestep)
@@ -202,7 +202,7 @@ dump_freq=out_put_freq_calc(no_timestep_,1000)
 thermo_freq=out_put_freq_calc(no_timestep_,1000)
 
 
-np_req=str(8) 
+np_req=str(16) 
 var_choice_1=erate
 var_choice_2=internal_stiffness
 
