@@ -32,8 +32,8 @@ from simulation_production_module import *
 box_size_bar=100
 
 
-number_of_points=20
-n_shear_points=5
+number_of_points=40
+n_shear_points=10
 
 
 
@@ -43,15 +43,10 @@ Path_2_shell_scirpts='/Users/luke_dev/Documents/Shell_scripts_for_MYRIAD'
 abs_path_2_lammps_exec='/home/ucahlrl/simulation_run_folder/lammps_hirotori/build_MYRIAD_ext/lmp_mpi'
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/in.langevin_with_hookean_flat_elastic_particle_only_dump_hdf5_mol'
 
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_brownian_uef_flat_elastic_particles_biax'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_45'
-abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_30'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_15'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_5'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_10'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_60'
-#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_mol_100_nemd_run_tchain_70'
+
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_tri_plate_chain_mol_tchain_30'
+#abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_tri_plate_chain_mol_tchain_60'
+abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_with_hookean_flat_elastic_tri_plate_chain_mol_tchain_15'
 
 #abs_path_2_lammps_script='/home/ucahlrl/simulation_run_folder/lammps_scripts/in.nvt_uef_oldroyd_db'
 
@@ -67,10 +62,10 @@ extra_code='module unload mpi compilers gcc-libs \n module load beta-modules \n 
 wd_path='/home/ucahlrl/Scratch/output/nvt_runs/final_plate_runs/'
 
 
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_run_100_small_tstep_novisc'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_250_tdamp_250_tchain_45'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_250_tdamp_250_tchain_high_shear_rates_run_2'
-wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_plate_strain_500_tdamp_250_tchain_high_shear_rates'
+
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_chain_strain_500_tdamp_250_tchain_high_shear_rates'
+wd_path='/home/ucahlrl/Scratch/output/nvt_runs/shear_chain_strain_500_tdamp_250_tchain_0.8_1.55_shear_rates'
+
 
 num_task_req=''
 
@@ -82,10 +77,13 @@ collision_time_negative_bar=0.05071624521210362
 
 
 
-erate=np.linspace(0,0.035,n_shear_points)# tchain 15, 10 points
-#erate=np.linspace(0.07,1.335,n_shear_points) #tchain 15, 10 points 
-erate=np.linspace(1.345,1.395,n_shear_points) # tchain 60, 10 points 
-erate=np.linspace(1.4,1.55, n_shear_points) # tchain 30 , 10 points 
+
+erate=np.linspace(0.05,1,n_shear_points)#tchain 60, 10 points 
+erate=np.linspace(0.11875,0.88125 ,n_shear_points) # intermediate points 
+#erate=np.array([0.05,0.11875,0.2875,0.309375,0.5 ,0.525, 0.690625,0.7625,0.88125,1.0 ])
+#erate=np.linspace(1.1,1.55,n_shear_points)
+erate=np.linspace(0.6,1.55,n_shear_points)
+
 
 combined_erate=np.array([0.        , 0.00388889, 0.00777778, 0.01166667, 0.01555556,
        0.01944444, 0.02333333, 0.02722222, 0.03111111, 0.035  ,0.07      , 0.13894737, 0.20789474, 0.27684211, 0.34578947,
@@ -100,7 +98,7 @@ combined_erate=np.array([0.        , 0.00388889, 0.00777778, 0.01166667, 0.01555
 i_=0
 j_=number_of_points
 
-fluid_name='plateshearnvt'
+fluid_name='chainshearnvt'
 
 
 
